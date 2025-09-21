@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// Apply fall damage to the player
 /// </summary>
 public class PlayerFallDamage : Component, IPlayerEvent
@@ -20,9 +20,28 @@ public class PlayerFallDamage : Component, IPlayerEvent
 	/// </summary>
 	[Property] public float DamageMultiplier { get; set; } = 1.0f;
 
+	/// <summary>
+	/// Fall damage sound
+	/// </summary>
+	[Property] public SoundEvent FallSound { get; set; }
+
+
+	int landCount = 0;
+
+	[Rpc.Owner]
+	private void PlayFallSound()
+	{
+		GameObject.PlaySound( FallSound );
+	}
+
 	void IPlayerEvent.OnLand( float distance, Vector3 velocity )
 	{
-		if ( IsProxy ) return;
+		if ( !Networking.IsHost ) return;
+
+		landCount++;
+
+		if ( landCount < 1 )
+			return;
 
 		var damageScale = MathX.Remap( distance, MinimumFallDistance, DeathFallDistance, 0, 1 );
 		int damageAmount = (int)(damageScale * 100 * DamageMultiplier);
@@ -30,6 +49,13 @@ public class PlayerFallDamage : Component, IPlayerEvent
 
 		// play smashed legs on the ground sound
 
-		Player.TakeDamage( damageAmount, Guid.Empty );
+		if ( Player is IDamageable damage )
+		{
+			var dmg = new DamageInfo( damageAmount, Player.GameObject, null );
+			dmg.Tags.Add( DamageTags.Fall );
+			damage.OnDamage( dmg );
+
+			PlayFallSound();
+		}
 	}
 }

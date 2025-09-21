@@ -1,0 +1,22 @@
+{
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "Wa Harmonics B 1",
+      "Type": "map",
+      "Org": "local",
+      "Ident": "waharmonicsb1",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": [],
+      "EditorReferences": [],
+      "Mounts": null,
+      "IsStandaloneOnly": false,
+      "Metadata": {
+        "SingleAssetSource": "maps/wa_harmonics_b1.vmap",
+        "ParentPackage": "softsplit.garryware"
+      }
+    }
+  }
+}

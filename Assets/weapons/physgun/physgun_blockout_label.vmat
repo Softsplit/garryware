@@ -1,0 +1,28 @@
+"Layer0"
+{
+	"shader"	"shaders/complex.shader"
+	"F_SPECULAR"	"1"
+	"g_bFogEnabled"	"1"
+	"g_nScaleTexCoordUByModelScaleAxis"	"0"
+	"g_nScaleTexCoordVByModelScaleAxis"	"0"
+	"g_flAmbientOcclusionDirectDiffuse"	"0"
+	"g_flAmbientOcclusionDirectSpecular"	"0"
+	"g_flModelTintAmount"	"1"
+	"g_flFadeExponent"	"1"
+	"g_flMetalness"	"0"
+	"g_flRoughnessScaleFactor"	"1"
+	"g_vColorTint"	"[1.000000 1.000000 1.000000 0.000000]"
+	"TextureRoughness"	"[0.400000 0.400000 0.400000 0.000000]"
+	"g_vTexCoordOffset"	"[0.000000 0.000000 0.000000 0.000000]"
+	"g_vTexCoordScale"	"[1.000000 1.000000 0.000000 0.000000]"
+	"g_vTexCoordScrollSpeed"	"[0.000000 0.000000 0.000000 0.000000]"
+	"TextureAmbientOcclusion"	"materials/default/default_ao.tga"
+	"TextureColor"	"weapons/physgun/physgun_blockout_label.png"
+	"TextureNormal"	"materials/default/default_normal.tga"
+	"Compiled Textures"
+	{
+		"g_tAmbientOcclusion"	"materials/default/default_ao_tga_7449568e.generated.vtex"
+		"g_tColor"	"weapons/physgun/physgun_blockout_label_png_710affe6.generated.vtex"
+		"g_tNormal"	"weapons/physgun/physgun_blockout_label_vmat_g_tnormal_d0f40c2a.generated.vtex"
+	}
+}

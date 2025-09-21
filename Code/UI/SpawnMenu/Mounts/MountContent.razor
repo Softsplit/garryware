@@ -1,0 +1,57 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Mounting;
+@inherits Panel
+
+@if ( mount is null )
+{
+    <root>
+        Error getting mount.
+    </root>
+    return;
+}
+
+
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar></SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+        <VirtualGrid Items=@( GetData() ) ItemSize=@(120)>
+            <Item Context="item">
+                @if (item is ResourceLoader loader)
+                {
+                    <SpawnIcon Loader="@loader" @onclick=@( () => Spawn( loader.Path ) )></SpawnIcon>
+                }
+            </Item>
+        </VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    public string Ident { get; set; }
+
+    BaseGameMount mount;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        mount = await Sandbox.Mounting.Directory.Mount( Ident );
+    }
+
+    void Spawn(string ident)
+    {
+        Log.Info($"Spawning {ident}");
+
+        GameManager.Spawn(ident);
+    }
+
+    IEnumerable<object> GetData()
+    {
+        return mount?.Resources.Where( x => x.Type == ResourceType.Model );
+    }
+
+}

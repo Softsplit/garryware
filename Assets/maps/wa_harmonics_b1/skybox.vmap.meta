@@ -1,0 +1,22 @@
+{
+  "publish": {
+    "Enabled": false,
+    "ProjectConfig": {
+      "Title": "Skybox",
+      "Type": "map",
+      "Org": "local",
+      "Ident": "skybox",
+      "Schema": 0,
+      "IncludeSourceFiles": false,
+      "Resources": null,
+      "PackageReferences": [],
+      "EditorReferences": [],
+      "Mounts": null,
+      "IsStandaloneOnly": false,
+      "Metadata": {
+        "SingleAssetSource": "maps/wa_harmonics_b1/skybox.vmap",
+        "ParentPackage": "softsplit.garryware"
+      }
+    }
+  }
+}

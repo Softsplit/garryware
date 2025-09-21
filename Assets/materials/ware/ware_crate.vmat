@@ -1,0 +1,14 @@
+"Layer0"
+{
+	"shader"		"shaders/complex.shader"
+	"TextureColor"		"materials/ware/ware_crate_color.tga"
+	"SystemAttributes"
+	{
+		"PhysicsSurfaceProperties"		"concrete"
+	}
+	"F_DETAIL_TEXTURE"		"1"
+	"TextureDetail"		"materials/ware/detail_color.tga"
+	"g_vDetailTexCoordScale"		"[1.900000 1.900000]"
+	"g_flDetailBlendFactor"		"1.000000"
+	"TextureRoughness"		"materials/default/default_rough_s1import.tga"
+}

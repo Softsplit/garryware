@@ -18,7 +18,7 @@ public sealed class PlayerObserver : Component
 	{
 		if ( IsProxy ) return;
 
-		var corpse = Scene.GetAllComponents<PlayerCorpse>()
+		var corpse = Scene.GetAllComponents<DeathCameraTarget>()
 					.Where( x => x.Connection == Network.Owner )
 					.OrderByDescending( x => x.Created )
 					.FirstOrDefault();
@@ -33,28 +33,26 @@ public sealed class PlayerObserver : Component
 			return;
 
 		// If pressed a button, or has been too long
-		if ( Input.Pressed( "attack1" ) || Input.Pressed( "jump" ) || timeSinceStarted > 4 )
+		if ( Input.Pressed( "attack1" ) || Input.Pressed( "jump" ) || timeSinceStarted > 4f )
 		{
 			Respawn();
 			GameObject.Destroy();
 		}
 	}
 
-	[Rpc.Owner]
+	[Rpc.Host( NetFlags.OwnerOnly | NetFlags.Reliable )]
 	public void Respawn()
 	{
-		if ( !Networking.IsHost ) return;
-
-		GameManager.Current.SpawnPlayerForConnection( Network.Owner );
+		GameManager.Current.SpawnPlayer( Network.Owner );
 		GameObject.Destroy();
 	}
 
-	private void RotateAround( PlayerCorpse target )
+	private void RotateAround( Component target )
 	{
 		// Find the corpse eyes
 		if ( !target.Components.Get<SkinnedModelRenderer>().TryGetBoneTransform( "head", out var tx ) )
 		{
-			tx.Position = target.GameObject.GetBounds().Center;
+			tx.Position = target.GameObject.GetBounds().Center + Vector3.Up * 25f;
 		}
 
 		var e = EyeAngles;
@@ -64,9 +62,9 @@ public sealed class PlayerObserver : Component
 		EyeAngles = e;
 
 		var center = tx.Position;
-		var targetPos = center - EyeAngles.Forward * 150.0f;
+		var targetPos = center - EyeAngles.Forward * 150f;
 
-		var tr = Scene.Trace.FromTo( center, targetPos ).Radius( 1.0f ).WithoutTags( "ragdoll" ).Run();
+		var tr = Scene.Trace.FromTo( center, targetPos ).Radius( 1.0f ).WithoutTags( "ragdoll", "effect" ).Run();
 
 		Scene.Camera.WorldPosition = Vector3.Lerp( Scene.Camera.WorldPosition, tr.EndPosition, timeSinceStarted, true );
 		Scene.Camera.WorldRotation = EyeAngles;

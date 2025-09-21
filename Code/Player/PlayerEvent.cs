@@ -1,33 +1,42 @@
-﻿/// <summary>
-/// Called only on the Player's GameObject
+/// <summary>
+/// Called only on the Player's GameObject for their actions or events
 /// </summary>
 public interface IPlayerEvent : ISceneEvent<IPlayerEvent>
 {
 	void OnSpawned() { }
 
+	public struct DamageParams
+	{
+		public float Damage { get; set; }
+		public GameObject Attacker { get; set; }
+		public GameObject Weapon { get; set; }
+		public TagSet Tags { get; set; }
+		public Vector3 Position { get; set; }
+		public Vector3 Origin { get; set; }
+	}
+	void OnDamage( DamageParams args ) { }
+
+	public struct DiedParams
+	{
+		public GameObject Attacker { get; set; }
+	}
+	void OnDied( DiedParams args ) { }
+
 	void OnJump() { }
 	void OnLand( float distance, Vector3 velocity ) { }
-
-	void OnTakeDamage( float damage ) { }
-	void OnDied() { }
 	void OnSuicide() { }
-
-	void OnWeaponAdded( BaseWeapon weapon ) { }
+	void OnPickup( BaseCarryable item ) { }
+	void OnCameraMove( ref Angles angles ) { }
+	void OnCameraSetup( CameraComponent camera ) { }
+	void OnCameraPostSetup( CameraComponent camera ) { }
 }
 
 /// <summary>
-/// Broadcasted to everything when the local player takes actions
+/// Broadcasted to the entire scene on the local player's actions or events
 /// </summary>
 public interface ILocalPlayerEvent : ISceneEvent<ILocalPlayerEvent>
 {
 	void OnJump() { }
 	void OnLand( float distance, Vector3 velocity ) { }
-
-	void OnTakeDamage( float damage ) { }
-
-	void OnWeaponAdded( BaseWeapon weapon ) { }
-
-	void OnCameraMove( ref Angles angles ) { }
-	void OnCameraSetup( CameraComponent camera ) { }
-	void OnCameraPostSetup( CameraComponent camera ) { }
+	void OnPickup( BaseCarryable weapon ) { }
 }

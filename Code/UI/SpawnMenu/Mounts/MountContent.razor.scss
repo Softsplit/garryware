@@ -1,0 +1,21 @@
+MountContent
+{
+	
+}
+
+
+MountContent > .body
+{
+	flex-grow: 1;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+}
+
+.spawnicon
+{
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+}

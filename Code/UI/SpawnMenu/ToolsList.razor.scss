@@ -1,0 +1,31 @@
+ToolsList
+{
+	flex-grow: 1;
+}
+
+ToolsList > .left
+{
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-direction: column;
+	width: 200px;
+	padding: 0.5rem;
+
+	.list
+	{
+		flex-direction: column;
+		background-color: #2225;
+		padding: 0.5rem;
+		border-radius: 6px;
+		height: 100%;
+	}
+}
+
+ToolsList > .body
+{
+	flex-direction: column;
+	flex-grow: 1;
+	padding: 8px;
+	margin: 8px;
+	margin-left: 0;
+}

@@ -1,0 +1,16 @@
+"Layer0"
+{
+	"shader"	"weapons/toolgun/toolgun-screen.shader"
+	"g_bFogEnabled"	"1"
+	"g_flTintColor"	"[1.000000 1.000000 1.000000 0.000000]"
+	"TextureColor"	"[0.192157 0.192157 0.192157 0.000000]"
+	"TextureRoughness"	"[0.118000 0.118000 0.118000 0.000000]"
+	"TextureNormal"	"materials/default/default_normal.tga"
+	"TextureRma"	"weapons/toolgun/toolgun-screen_vmat_g.png"
+	"Compiled Textures"
+	{
+		"g_tColor"	"weapons/toolgun/toolgun-screen_vmat_g_tcolor_e6becb38.generated.vtex"
+		"g_tNormal"	"materials/default/default_normal_tga_eabac46e.generated.vtex"
+		"g_tRma"	"weapons/toolgun/toolgun-screen_vmat_g_trma_97ab87d5.generated.vtex"
+	}
+}

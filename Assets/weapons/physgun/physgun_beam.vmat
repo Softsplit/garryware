@@ -1,0 +1,14 @@
+"Layer0"
+{
+	"shader"	"shaders/line.shader"
+	"g_bFogEnabled"	"1"
+	"TextureColor"	"textures/beams/beam_plasma_02.png"
+	"TextureNormal"	"materials/default/default_normal.tga"
+	"TextureRma"	"materials/default/default_rough.tga"
+	"Compiled Textures"
+	{
+		"g_tColor"	"textures/beams/beam_plasma_02_tga_ac20569b.generated.vtex"
+		"g_tNormal"	"materials/default/default_normal_tga_40c7e355.generated.vtex"
+		"g_tRma"	"materials/default/default_rough_tga_a8f7398b.generated.vtex"
+	}
+}
