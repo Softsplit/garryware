@@ -237,35 +237,6 @@
           "Children": []
         },
         {
-          "__guid": "a3fddc09-2353-4df2-bf67-ea6375424180",
-          "__version": 1,
-          "Flags": 0,
-          "Name": "SpawnMenu",
-          "Position": "0,0,0",
-          "Rotation": "0,0,0,1",
-          "Scale": "1,1,1",
-          "Tags": "",
-          "Enabled": true,
-          "NetworkMode": 2,
-          "NetworkInterpolation": true,
-          "NetworkOrphaned": 0,
-          "OwnerTransfer": 1,
-          "Components": [
-            {
-              "__type": "Sandbox.SpawnMenuHost",
-              "__guid": "86833a61-3b1f-419f-8e67-406ef893c06e",
-              "__enabled": true,
-              "OnComponentDestroy": null,
-              "OnComponentDisabled": null,
-              "OnComponentEnabled": null,
-              "OnComponentFixedUpdate": null,
-              "OnComponentStart": null,
-              "OnComponentUpdate": null
-            }
-          ],
-          "Children": []
-        },
-        {
           "__guid": "1537e42a-7661-47f6-934d-e5c28103fc50",
           "__version": 1,
           "Flags": 0,

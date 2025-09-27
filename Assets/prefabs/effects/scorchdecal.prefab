@@ -1,0 +1,85 @@
+{
+    "RootObject": {
+        "__guid": "47b9c5d1-5757-40f2-a752-30130ac7bb02",
+        "Flags": 0,
+        "Name": "scorchdecal",
+        "Enabled": true,
+        "Components": [
+            {
+                "__type": "TemporaryDecal",
+                "__guid": "b3089556-3e05-4d3a-a440-7f0a2f39268e",
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null
+            }
+        ],
+        "Children": [
+            {
+                "__guid": "c024e44b-32cf-465b-a48d-2274d403be8b",
+                "Flags": 0,
+                "Name": "grenade_scorchmark",
+                "Position": "-128,0,12.00009",
+                "Enabled": true,
+                "Components": [
+                    {
+                        "__type": "Sandbox.DecalRenderer",
+                        "__guid": "8cc4a58d-adff-4e53-90a4-df524f4284b9",
+                        "CutoffAngle": 180,
+                        "CutoffAngleSoftness": 45,
+                        "Material": "materials/decals/scorch.vmat",
+                        "Mod2XBlending": true,
+                        "OnComponentDestroy": null,
+                        "OnComponentDisabled": null,
+                        "OnComponentEnabled": null,
+                        "OnComponentFixedUpdate": null,
+                        "OnComponentStart": null,
+                        "OnComponentUpdate": null,
+                        "RenderOptions": {
+                            "GameLayer": true,
+                            "OverlayLayer": false,
+                            "BloomLayer": false,
+                            "AfterUILayer": false
+                        },
+                        "Size": "256,256,256",
+                        "TintColor": "1,1,1,1",
+                        "TriPlanar": true
+                    }
+                ]
+            }
+        ],
+        "__variables": [],
+        "__properties": {
+            "FixedUpdateFrequency": 50,
+            "MaxFixedUpdates": 5,
+            "NetworkFrequency": 30,
+            "NetworkInterpolation": true,
+            "PhysicsSubSteps": 1,
+            "ThreadedAnimation": true,
+            "TimeScale": 1,
+            "UseFixedUpdate": true,
+            "Metadata": {},
+            "NavMesh": {
+                "Enabled": false,
+                "IncludeStaticBodies": true,
+                "IncludeKeyframedBodies": true,
+                "EditorAutoUpdate": true,
+                "AgentHeight": 64,
+                "AgentRadius": 16,
+                "AgentStepSize": 18,
+                "AgentMaxSlope": 40,
+                "ExcludedBodies": "",
+                "IncludedBodies": ""
+            }
+        }
+    },
+    "ShowInMenu": false,
+    "MenuPath": null,
+    "MenuIcon": null,
+    "DontBreakAsTemplate": false,
+    "ResourceVersion": 1,
+    "__references": [],
+    "__version": 1
+}

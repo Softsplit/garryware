@@ -222,8 +222,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			OnControl();
 	}
 
-	RealTimeSince timeSinceJumpPressed;
-
 	void OnControl()
 	{
 		Scene.Get<Inventory>()?.HandleInputOpen();
@@ -234,19 +232,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			return;
 		}
 
-		if ( Input.Pressed( "jump" ) )
-		{
-			if ( timeSinceJumpPressed < 0.3f )
-			{
-				if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
-				{
-					noclip.Enabled = !noclip.Enabled;
-				}
-			}
-
-			timeSinceJumpPressed = 0;
-		}
-
 		if ( Input.Pressed( "undo" ) )
 		{
 			ConsoleSystem.Run( "undo" );
@@ -255,15 +240,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		GetComponent<PlayerInventory>()?.OnControl();
 
 		Scene.Get<Inventory>()?.HandleInput();
-
-		if ( Scene.Camera.RenderExcludeTags.Contains( "ui" ) )
-			return;
-
-		if ( !WantsHideHud )
-		{
-			var hud = Scene.Camera.Hud;
-			DrawVitals( hud, Screen.Size * new Vector2( 0.1f, 0.9f ) );
-		}
 	}
 
 	[ConCmd( "sbdm.dev.sethp", ConVarFlags.Cheat )]
@@ -377,12 +353,11 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	}
 
 	float roll;
+
 	private void ApplyMovementCameraEffects( CameraComponent camera )
 	{
 		if ( Controller.ThirdPerson ) return;
 		if ( !GamePreferences.ViewBobbing ) return;
-
-		var scaler = Controller.WishVelocity.Length.Remap( 0, Controller.RunSpeed, 0, 1 );
 
 		// side movement
 		var r = Controller.WishVelocity.Dot( EyeTransform.Left ) / -250.0f;
@@ -404,6 +379,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	}
 
 	bool noPickupNotices = false;
+
 	public IDisposable NoNoticeScope()
 	{
 		noPickupNotices = true;
@@ -434,16 +410,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( Controller.ThirdPerson || !player.IsLocalPlayer ) return;
 
 		new Punch( new Vector3( -20, 0, 0 ), 0.5f, 2.0f, 1.0f );
-	}
-
-	public void DrawVitals( HudPainter hud, Vector2 bottomleft )
-	{
-		hud.DrawHudElement( $"{Health.CeilToInt()}", bottomleft, HealthIcon, 30f );
-
-		if ( Armour > 0f )
-		{
-			hud.DrawHudElement( $"{Armour.CeilToInt()}", bottomleft - new Vector2( 0, 64f * Hud.Scale ), ArmourIcon, 30f );
-		}
 	}
 
 	public T GetWeapon<T>() where T : BaseCarryable

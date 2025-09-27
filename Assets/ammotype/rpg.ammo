@@ -1,0 +1,8 @@
+{
+    "AmmoType": "Rocket",
+    "MaxAmount": 10,
+    "Icon": "airplanemode_on",
+    "SvgIcon": "",
+    "__references": [],
+    "__version": 0
+}

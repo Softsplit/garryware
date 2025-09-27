@@ -1,0 +1,90 @@
+{
+    "RootObject": {
+        "__guid": "3c948bf4-5353-443a-bb65-8f28584fed1b",
+        "Flags": 0,
+        "Name": "crowbar",
+        "Enabled": true,
+        "NetworkMode": 1,
+        "NetworkOrphaned": 1,
+        "Components": [
+            {
+                "__type": "CrowbarWeapon",
+                "__guid": "e5edc17b-9ca2-4eb1-bd56-1bd2e25a4eee",
+                "Damage": 25,
+                "DisplayIcon": {
+                    "$compiler": "texture",
+                    "$source": "svgsource",
+                    "data": {
+                        "Size": "256,256",
+                        "Source": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"1200pt\" height=\"1200pt\" version=\"1.1\" viewBox=\"0 0 1200 1200\" xmlns=\"http://www.w3.org/2000/svg\">\n <path d=\"m1.8711 496.26s0.13281-172.03 0-203.48c-0.63672-152.62 131.63-183.14 213.04-101.75l722.41 691.9c43.703 43.031 132.27 122.1 264.54 132.27 0 0-189.84 64.871-325.6-71.23l-712.25-681.72c-40.691-40.691-82.262-15.539-81.395 30.527v203.5l-40.691-40.703z\" fill-rule=\"evenodd\"/>\n</svg>",
+                        "Colorize": true,
+                        "TargetColor": "1,1,1,1",
+                        "Rotate": 0,
+                        "FlipVertical": false,
+                        "FlipHorizontal": false,
+                        "Padding": {
+                            "Size": "0,0",
+                            "EdgeSize": "0,0"
+                        }
+                    },
+                    "compiled": "textures/generated/svgsource/7b6aed82a7a4b7b4.vtex"
+                },
+                "DisplayName": "Crowbar",
+                "HitSound": "weapons/crowbar/crowbar_hit.sound",
+                "HoldType": "Swing",
+                "InventoryOrder": 0,
+                "InventorySlot": 0,
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "ParentBone": "hold_r",
+                "SwingDelay": 0.45,
+                "SwingSound": "weapons/crowbar/swing.sound",
+                "Value": 1,
+                "ViewModelPrefab": {
+                    "_type": "gameobject",
+                    "prefab": "weapons/crowbar/crowbar_vm.prefab"
+                },
+                "WorldModelPrefab": {
+                    "_type": "gameobject",
+                    "prefab": "weapons/crowbar/crowbar_wm.prefab"
+                }
+            }
+        ],
+        "Children": [],
+        "__variables": [],
+        "__properties": {
+            "FixedUpdateFrequency": 50,
+            "MaxFixedUpdates": 5,
+            "NetworkFrequency": 30,
+            "NetworkInterpolation": true,
+            "PhysicsSubSteps": 1,
+            "ThreadedAnimation": true,
+            "TimeScale": 1,
+            "UseFixedUpdate": true,
+            "Metadata": {},
+            "NavMesh": {
+                "Enabled": false,
+                "IncludeStaticBodies": true,
+                "IncludeKeyframedBodies": true,
+                "EditorAutoUpdate": true,
+                "AgentHeight": 64,
+                "AgentRadius": 16,
+                "AgentStepSize": 18,
+                "AgentMaxSlope": 40,
+                "ExcludedBodies": "",
+                "IncludedBodies": ""
+            }
+        }
+    },
+    "ShowInMenu": false,
+    "MenuPath": null,
+    "MenuIcon": null,
+    "DontBreakAsTemplate": false,
+    "ResourceVersion": 1,
+    "__references": [],
+    "__version": 1
+}

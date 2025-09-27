@@ -1,0 +1,103 @@
+{
+    "RootObject": {
+        "__guid": "b039b186-1a9e-4166-8c29-e87c9bf90261",
+        "Flags": 0,
+        "Name": "item_rpg",
+        "Enabled": true,
+        "NetworkMode": 1,
+        "NetworkOrphaned": 1,
+        "Components": [
+            {
+                "__type": "Sandbox.BoxCollider",
+                "__guid": "c91d9757-b4fa-4f39-b388-ec6129287749",
+                "Center": "-1.196789,4.456297,16",
+                "Friction": null,
+                "IsTrigger": true,
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "OnObjectTriggerEnter": null,
+                "OnObjectTriggerExit": null,
+                "OnTriggerEnter": null,
+                "OnTriggerExit": null,
+                "Scale": "79.34487,40.91259,32",
+                "Static": false,
+                "Surface": null,
+                "SurfaceVelocity": "0,0,0"
+            },
+            {
+                "__type": "InventoryPickup",
+                "__guid": "68f31dea-403a-4788-8c4b-7416c88f28ed",
+                "Items": [
+                    {
+                        "_type": "gameobject",
+                        "prefab": "weapons/rpg/rpg.prefab"
+                    }
+                ],
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "PickupSound": "sounds/weapons/gun_pickup.sound",
+                "RespawnTimer": 30,
+                "ShouldRespawn": true
+            }
+        ],
+        "Children": [
+            {
+                "__guid": "16c7ba4f-1743-433b-904f-8f0aed4e72bc",
+                "Flags": 0,
+                "Name": "Trigger",
+                "Position": "0,0,4.695414",
+                "Enabled": true
+            },
+            {
+                "__guid": "656da311-7f42-4dca-8ed1-bebd93d376eb",
+                "Flags": 0,
+                "Name": "rpg_wm (1)",
+                "Position": "0,0,4",
+                "Rotation": "0.7070626,0.007906434,-0.007906434,0.7070626",
+                "Enabled": true,
+                "NetworkMode": 2,
+                "__Prefab": "weapons/rpg/rpg_wm.prefab",
+                "__PrefabVariables": {}
+            }
+        ],
+        "__variables": [],
+        "__properties": {
+            "FixedUpdateFrequency": 50,
+            "MaxFixedUpdates": 5,
+            "NetworkFrequency": 30,
+            "NetworkInterpolation": true,
+            "PhysicsSubSteps": 1,
+            "ThreadedAnimation": true,
+            "TimeScale": 1,
+            "UseFixedUpdate": true,
+            "Metadata": {},
+            "NavMesh": {
+                "Enabled": false,
+                "IncludeStaticBodies": true,
+                "IncludeKeyframedBodies": true,
+                "EditorAutoUpdate": true,
+                "AgentHeight": 64,
+                "AgentRadius": 16,
+                "AgentStepSize": 18,
+                "AgentMaxSlope": 40,
+                "ExcludedBodies": "",
+                "IncludedBodies": ""
+            }
+        }
+    },
+    "ShowInMenu": true,
+    "MenuPath": "Deathmatch/Items/RPG",
+    "MenuIcon": null,
+    "DontBreakAsTemplate": true,
+    "ResourceVersion": 1,
+    "__references": [],
+    "__version": 1
+}

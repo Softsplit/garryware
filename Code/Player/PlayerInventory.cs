@@ -11,12 +11,12 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 		// Don't run any pickup notices when spawning in
 		using var _ = Player.NoNoticeScope();
 
-		Pickup( "weapons/camera/camera.prefab" );
-		Pickup( "weapons/physgun/physgun.prefab" );
-		Pickup( "weapons/toolgun/toolgun.prefab" );
-		Pickup( "weapons/glock/glock.prefab" );
+		// Pickup( "weapons/crowbar/crowbar.prefab" );
+		// Pickup( "weapons/physgun/physgun.prefab" );
+		// Pickup( "weapons/glock/glock.prefab" );
+		// Pickup( "weapons/rpg/rpg.prefab" );
 
-		Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "ammotype/9mm.ammo" ), 200, false );
+		// Player.GiveAmmo( ResourceLibrary.Get<AmmoResource>( "ammotype/9mm.ammo" ), 200, false );
 	}
 
 	public bool Pickup( string prefabName, bool notice = true )

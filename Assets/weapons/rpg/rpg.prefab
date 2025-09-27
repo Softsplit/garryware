@@ -1,0 +1,196 @@
+{
+  "RootObject": {
+    "__guid": "3c948bf4-5353-443a-bb65-8f28584fed1b",
+    "__version": 1,
+    "Flags": 0,
+    "Name": "rpg",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkInterpolation": true,
+    "NetworkOrphaned": 0,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "RpgWeapon",
+        "__guid": "45dbfc9d-3b70-4986-994e-905d4f1670ba",
+        "__enabled": true,
+        "AmmoResource": "ammotype/rpg.ammo",
+        "CanCancelReload": true,
+        "ClipContents": 20,
+        "ClipMaxSize": 30,
+        "DeployTime": 0.5,
+        "DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "svgsource",
+          "data": {
+            "Size": "512,256",
+            "Source": "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg fill=\"#000000\" version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" \n\t width=\"800px\" height=\"800px\" viewBox=\"0 0 459.615 459.614\"\n\t xml:space=\"preserve\">\n<g>\n\t<path d=\"M455.456,249.343l-13.932,3.993v53.451h-40.142l-30.042-37.909h-68.935v50.638c0,6.752-2.573,12.224-5.734,12.224\n\t\tl-78.506-62.856H101.073c-1.374,0-2.733-0.027-4.09-0.05v-78.049c1.357-0.022,2.717-0.047,4.09-0.047h121.717l73.873-62.862\n\t\tc3.169,0,5.729,5.475,5.729,12.238v50.624h64.635l34.354-43.598h40.142v59.82l13.927,4.169\n\t\tC464.818,230.934,455.456,249.343,455.456,249.343z M0,229.808c0,19.485,34.821,35.634,80.359,38.594v-77.169\n\t\tC34.827,194.19,0,210.327,0,229.808z\"/>\n</g>\n</svg>",
+            "Colorize": true,
+            "TargetColor": "1,1,1,1",
+            "Scale": 1,
+            "Offset": "0,0",
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": false
+          },
+          "compiled": null
+        },
+        "DisplayName": "RPG",
+        "HoldType": "Shotgun",
+        "IncrementalReloading": false,
+        "InventoryOrder": 1,
+        "InventorySlot": 3,
+        "IsSelfAmmo": false,
+        "LaserEnd": {
+          "_type": "gameobject",
+          "go": "6b3e52c5-5f40-4a22-936a-83dba15c04c9"
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "ProjectilePrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_projectile.prefab"
+        },
+        "ReloadTime": 1.6,
+        "StartingAmmo": 2,
+        "TimeBetweenShots": 2,
+        "UsesAmmo": true,
+        "UsesClips": false,
+        "Value": 50,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_wm.prefab"
+        }
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "6b3e52c5-5f40-4a22-936a-83dba15c04c9",
+        "__version": 1,
+        "Flags": 0,
+        "Name": "Laser End Point",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "0.25,0.25,0.25",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkInterpolation": true,
+        "NetworkOrphaned": 0,
+        "OwnerTransfer": 1,
+        "Components": [],
+        "Children": [
+          {
+            "__guid": "7d4cb81f-ac08-49ee-b8db-24998db6f903",
+            "__version": 1,
+            "Flags": 0,
+            "Name": "Point Light",
+            "Position": "-1,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "light_point,light",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkInterpolation": true,
+            "NetworkOrphaned": 0,
+            "OwnerTransfer": 1,
+            "Components": [
+              {
+                "__type": "Sandbox.PointLight",
+                "__guid": "d560afe2-60bb-431e-922e-47ba1add934e",
+                "__enabled": true,
+                "Attenuation": 10,
+                "FogMode": "Enabled",
+                "FogStrength": 1,
+                "LightColor": "96.74419,0,0,1",
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "Radius": 3,
+                "Shadows": false
+              }
+            ],
+            "Children": []
+          },
+          {
+            "__guid": "c4b523e9-8fac-449f-8b56-3032b8ff8789",
+            "__version": 1,
+            "Flags": 0,
+            "Name": "Point Light - Subtle",
+            "Position": "-10,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "light_point,light",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkInterpolation": true,
+            "NetworkOrphaned": 0,
+            "OwnerTransfer": 1,
+            "Components": [
+              {
+                "__type": "Sandbox.PointLight",
+                "__guid": "892d2b0b-08ba-4bd6-b079-cec4eff1ccdc",
+                "__enabled": true,
+                "Attenuation": 10,
+                "FogMode": "Enabled",
+                "FogStrength": 1,
+                "LightColor": "0.55814,0,0,1",
+                "OnComponentDestroy": null,
+                "OnComponentDisabled": null,
+                "OnComponentEnabled": null,
+                "OnComponentFixedUpdate": null,
+                "OnComponentStart": null,
+                "OnComponentUpdate": null,
+                "Radius": 40,
+                "Shadows": true
+              }
+            ],
+            "Children": []
+          }
+        ]
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": true,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": ""
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [],
+  "__version": 2
+}

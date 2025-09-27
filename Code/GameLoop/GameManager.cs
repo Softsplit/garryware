@@ -2,6 +2,13 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 {
 	public GameManager( Scene scene ) : base( scene )
 	{
+		Listen( Stage.FinishUpdate, 0, Update, "Update" );
+		InitializeRounds();
+	}
+	
+	public void Update()
+	{
+		UpdateRounds();
 	}
 
 	void ISceneStartup.OnHostInitialize()

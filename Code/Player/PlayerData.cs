@@ -15,6 +15,12 @@ public sealed partial class PlayerData : Component
 
 	[Sync] public bool IsGodMode { get; set; }
 
+	// Round system properties
+	[Sync] public int RoundWins { get; set; }
+	[Sync] public int RoundLosses { get; set; }
+	[Sync] public bool HasCompletedCurrentRound { get; set; }
+	[Sync] public int CurrentRoundScore { get; set; }
+
 	public Connection Connection => Connection.Find( PlayerId );
 
 	/// <summary>
