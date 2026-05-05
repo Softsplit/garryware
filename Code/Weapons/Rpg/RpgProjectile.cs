@@ -1,11 +1,13 @@
-
+﻿
 /// <summary>
 /// An RPG projectile. It supports either being fired in a set direction, or continuously updated with an end target.
 /// </summary>
 public partial class RpgProjectile : Projectile
 {
 	[Property] public SoundEvent LoopingSound { get; set; }
-	[RequireComponent] public Explosive Explosive { get; set; }
+	[Property] public float ExplosionRadius { get; set; } = 256f;
+	[Property] public float ExplosionDamage { get; set; } = 150f;
+	[Property] public float ExplosionForce { get; set; } = 1.5f;
 
 	SoundHandle LoopingSoundHandle;
 
@@ -13,7 +15,10 @@ public partial class RpgProjectile : Projectile
 	{
 		base.OnEnabled();
 
-		LoopingSoundHandle = Sound.Play( LoopingSound, WorldPosition );
+		if ( LoopingSound.IsValid() )
+		{
+			LoopingSoundHandle = Sound.Play( LoopingSound, WorldPosition );
+		}
 
 		if ( IsProxy )
 			return;
@@ -28,12 +33,42 @@ public partial class RpgProjectile : Projectile
 
 	protected override void OnUpdate()
 	{
-		LoopingSoundHandle.Position = WorldPosition;
+		LoopingSoundHandle?.Position = WorldPosition;
 	}
 
 	protected override void OnHit( Collision collision = default )
 	{
-		Explosive.Explode();
+		Explode();
+	}
+
+	void Explode()
+	{
+		var explosionPrefab = ResourceLibrary.Get<PrefabFile>( "/prefabs/engine/explosion_med.prefab" );
+		if ( explosionPrefab == null )
+		{
+			Log.Warning( "RpgProjectile: Can't find /prefabs/engine/explosion_med.prefab" );
+			GameObject.Destroy();
+			return;
+		}
+
+		var go = GameObject.Clone( explosionPrefab, new CloneConfig { Transform = WorldTransform.WithScale( 1 ), StartEnabled = false } );
+		if ( go.IsValid() )
+		{
+			go.RunEvent<RadiusDamage>( x =>
+			{
+				x.Radius = ExplosionRadius;
+				x.PhysicsForceScale = ExplosionForce;
+				x.DamageAmount = ExplosionDamage;
+				x.Attacker = Instigator.GameObject;
+				x.DamageTags ??= new();
+				x.DamageTags.Add( DamageTags.Explosion );
+			}, FindMode.EverythingInSelfAndDescendants );
+
+			go.Enabled = true;
+			go.NetworkSpawn( true, null );
+		}
+
+		GameObject.Destroy();
 	}
 
 	/// <summary>

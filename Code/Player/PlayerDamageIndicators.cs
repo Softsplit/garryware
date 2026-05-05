@@ -1,53 +1,20 @@
-public sealed class PlayerDamageIndicators : Component, IPlayerEvent
+public sealed class PlayerDamageIndicators : Component, Local.IPlayerEvents
 {
 	[RequireComponent] Player Player { get; set; }
 
 	float RadialDistanceFromCenter => 128f;
 	float RadialIndicatorLifetime => 2f;
 
-	TimeSince timeSinceHurt = 10f;
-	Vignette damageVignette;
 	List<(Vector3 WorldPos, TimeSince Lifetime)> radialIndicators = new();
 
 	[Property] public Texture RadialDamageIcon { get; set; }
-
-	protected override void OnDisabled()
-	{
-		damageVignette?.Destroy();
-	}
-
-	protected override void OnDestroy()
-	{
-		damageVignette?.Destroy();
-	}
 
 	protected override void OnPreRender()
 	{
 		if ( !Player.IsLocalPlayer ) return;
 		if ( Scene.Camera is null ) return;
 
-		UpdateVignette();
 		UpdateRadialIndicators();
-	}
-
-	void UpdateVignette()
-	{
-		if ( damageVignette is null )
-		{
-			damageVignette = Scene.Camera.AddComponent<Vignette>();
-			damageVignette.Flags |= ComponentFlags.NotNetworked;
-			damageVignette.Color = Color.Red;
-			damageVignette.Intensity = 0;
-		}
-
-		if ( timeSinceHurt < 1f )
-		{
-			damageVignette.Intensity = (1f - timeSinceHurt) / 10f;
-		}
-		else
-		{
-			damageVignette.Intensity = 0;
-		}
 	}
 
 	void UpdateRadialIndicators()
@@ -89,13 +56,10 @@ public sealed class PlayerDamageIndicators : Component, IPlayerEvent
 		hud.SetMatrix( Matrix.Identity );
 	}
 
-	void IPlayerEvent.OnDamage( IPlayerEvent.DamageParams args )
+	void Local.IPlayerEvents.OnDamage( PlayerDamageParams args )
 	{
-		timeSinceHurt = 0f;
-
-		if ( args.Attacker.IsValid() )
-		{
-			radialIndicators.Add( (args.Attacker.WorldPosition, 0f) );
-		}
+		if ( !args.Attacker.IsValid() ) return;
+		
+		radialIndicators.Add( (args.Attacker.WorldPosition, 0f) );
 	}
 }

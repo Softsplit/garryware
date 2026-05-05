@@ -1,7 +1,7 @@
 {
   "RootObject": {
-    "__guid": "628ec5b7-a64d-490e-a218-1cdfc17b67df",
-    "__version": 1,
+    "__guid": "7a10fd44-7f01-414f-9dc6-e6ec891cb6d7",
+    "__version": 2,
     "Flags": 0,
     "Name": "rpg_wm",
     "Position": "0,0,0",
@@ -10,29 +10,25 @@
     "Tags": "",
     "Enabled": true,
     "NetworkMode": 0,
-    "NetworkInterpolation": true,
+    "NetworkFlags": 0,
     "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
     "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "WorldModel",
-        "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
+        "__guid": "f0bc724c-4fed-48ab-9f03-6985859b92c4",
         "__enabled": true,
-        "EjectBrass": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/eject_9mm.prefab"
-        },
+        "Flags": 0,
+        "EjectBrass": null,
         "EjectTransform": {
           "_type": "gameobject",
-          "go": "8e571825-7366-47b8-a226-d8c9ae8b083f"
+          "go": "997deebb-b176-46e1-b280-3c6a12f321f8"
         },
-        "MuzzleEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/muzzle.prefab"
-        },
+        "MuzzleEffect": null,
         "MuzzleTransform": {
           "_type": "gameobject",
-          "go": "ed6466c4-e28c-4e9b-8446-ffa3f096176d"
+          "go": "ee2db9cf-6e53-4ee3-82bd-3e1b6d054b8d"
         },
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -42,36 +38,35 @@
         "OnComponentUpdate": null,
         "Renderer": {
           "_type": "component",
-          "component_id": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
-          "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
+          "component_id": "9e1c8cbc-98ce-45a1-83a9-b5ff1911a651",
+          "go": "71aa3389-a51e-41c8-9739-509f1a5daa6f",
           "component_type": "SkinnedModelRenderer"
         },
-        "TracerEffect": {
-          "_type": "gameobject",
-          "prefab": "weapons/common/effects/tracer_9mm.prefab"
-        }
+        "TracerEffect": null
       }
     ],
     "Children": [
       {
-        "__guid": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
-        "__version": 1,
+        "__guid": "71aa3389-a51e-41c8-9739-509f1a5daa6f",
+        "__version": 2,
         "Flags": 0,
-        "Name": "model",
-        "Position": "-0.5918133,0.6022096,-14.1255",
+        "Name": "w_rocketlauncher",
+        "Position": "-11.775322,1.90733218,-9.15011024",
         "Rotation": "0,0,0,1",
-        "Scale": "2,2,2",
+        "Scale": "1.5,1.5,1.5",
         "Tags": "",
         "Enabled": true,
         "NetworkMode": 2,
-        "NetworkInterpolation": true,
+        "NetworkFlags": 0,
         "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
         "OwnerTransfer": 1,
         "Components": [
           {
             "__type": "Sandbox.SkinnedModelRenderer",
-            "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
+            "__guid": "9e1c8cbc-98ce-45a1-83a9-b5ff1911a651",
             "__enabled": true,
+            "Flags": 0,
             "AnimationGraph": null,
             "BodyGroups": 18446744073709551615,
             "BoneMergeTarget": null,
@@ -115,70 +110,55 @@
         ],
         "Children": [
           {
-            "__guid": "4f949ccb-cd38-4eff-a75f-e06754d3ddc1",
-            "__version": 1,
-            "Flags": 0,
-            "Name": "hold_R",
-            "Position": "-1.45742,0,5.464317",
-            "Rotation": "0,0,0,1",
-            "Scale": "1,1,1",
-            "Tags": "",
-            "Enabled": true,
-            "NetworkMode": 2,
-            "NetworkInterpolation": true,
-            "NetworkOrphaned": 0,
-            "OwnerTransfer": 1,
-            "Components": [],
-            "Children": [
-              {
-                "__guid": "8e571825-7366-47b8-a226-d8c9ae8b083f",
-                "__version": 1,
-                "Flags": 0,
-                "Name": "eject",
-                "Position": "3.912841,-0.647761,3.410283",
-                "Rotation": "0,0,0,1",
-                "Scale": "1,1,1",
-                "Tags": "",
-                "Enabled": true,
-                "NetworkMode": 2,
-                "NetworkInterpolation": true,
-                "NetworkOrphaned": 0,
-                "OwnerTransfer": 1,
-                "Components": [],
-                "Children": []
-              }
-            ]
-          },
-          {
-            "__guid": "ed6466c4-e28c-4e9b-8446-ffa3f096176d",
-            "__version": 1,
-            "Flags": 0,
+            "__guid": "ee2db9cf-6e53-4ee3-82bd-3e1b6d054b8d",
+            "__version": 2,
+            "Flags": 8,
             "Name": "muzzle",
-            "Position": "13.2196,0,8.088171",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
           },
           {
-            "__guid": "e0abb2b7-5809-42ad-b877-2265e56dd02f",
-            "__version": 1,
-            "Flags": 0,
+            "__guid": "997deebb-b176-46e1-b280-3c6a12f321f8",
+            "__version": 2,
+            "Flags": 8,
             "Name": "eject",
-            "Position": "2.455421,-0.647761,8.8746",
+            "Position": "0,0,0",
             "Rotation": "0,0,0,1",
             "Scale": "1,1,1",
             "Tags": "",
             "Enabled": true,
             "NetworkMode": 2,
-            "NetworkInterpolation": true,
+            "NetworkFlags": 0,
             "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          },
+          {
+            "__guid": "d54f588b-e1fb-4204-8b53-ce0753bb0544",
+            "__version": 2,
+            "Flags": 0,
+            "Name": "hold_R",
+            "Position": "-1.84864104,0,3.19587207",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
             "OwnerTransfer": 1,
             "Components": [],
             "Children": []
@@ -195,13 +175,15 @@
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
     },
     "__variables": []
@@ -212,7 +194,7 @@
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
   "__references": [
-    "facepunch.wrecoillessrifle#113432"
+    "facepunch.wrecoillessrifle#144908"
   ],
   "__version": 2
 }

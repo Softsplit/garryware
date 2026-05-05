@@ -1,0 +1,39 @@
+@import "/UI/Theme.scss";
+
+MenuOption
+{
+	flex-direction: row;
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: 5px;
+	color: #8ad;
+}
+
+.iconpanel
+{
+	width: 24px;
+}
+
+Label
+{
+	text-overflow: ellipsis;
+}
+
+MenuOption:hover
+{
+	color: white;
+	sound-in: ui.hover;
+}
+
+MenuOption:active
+{
+	color: $menu-text-strong;
+	background-color: $menu-accent-soft;
+	sound-in: ui.select;
+}
+
+MenuOption.active
+{
+	color: white;
+	background-color: $menu-accent;
+}

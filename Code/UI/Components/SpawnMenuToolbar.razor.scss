@@ -1,0 +1,36 @@
+SpawnMenuToolbar
+{
+	width: 100%;
+	padding: 1px 1px 8px 1px;
+	gap: 0.5rem;
+}
+
+.body, .left, .right
+{
+	gap: 0.5rem;
+	align-items: center;
+	justify-content: center;
+}
+
+TextEntry
+{
+	min-width: 256px;
+}
+
+DropDown
+{
+	padding: 10px;
+	gap: 16px;
+	align-items: center;
+	justify-content: center;
+
+	IconPanel
+	{
+		height: 16px;
+	}
+}
+
+.body
+{
+	flex-grow: 1;
+}

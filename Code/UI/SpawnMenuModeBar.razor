@@ -1,0 +1,34 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+
+    <div class="menu-segmented-group">
+    @{
+
+        var activeMode = SpawnMenuHost.GetActiveMode();
+
+
+        foreach ( var mode in Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuHost.SpawnMenuMode>().OrderBy( x => x.Type.Order ) )
+        {
+            if ( !mode.Attribute.CheckCondition() ) continue;
+
+            var activeClass = mode.Type.TargetType == activeMode?.GetType() ? "active" : "";
+
+            <div class="menu-mode-button @activeClass" @onclick="@( () => SpawnMenuHost.SwitchMode( mode.Type.Name ) )">
+                <div class="icon">@mode.Type.Icon</div>
+                <div class="title">@mode.Type.Title</div>                
+            </div>
+        }
+    }
+    </div>
+
+</root>
+
+@code
+{
+    protected override int BuildHash() => HashCode.Combine( SpawnMenuHost.GetActiveMode(), Game.TypeLibrary.GetTypesWithAttribute<SpawnMenuHost.SpawnMenuMode>() );
+}
+

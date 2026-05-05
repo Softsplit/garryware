@@ -1,125 +1,118 @@
 {
   "RootObject": {
-    "__guid": "628ec5b7-a64d-490e-a218-1cdfc17b67df",
+    "__guid": "cb1a2e3f-4d5b-6789-abcd-ef0123456701",
+    "__version": 2,
     "Flags": 0,
     "Name": "crowbar_wm",
+    "Position": "1.704281,-0.04967886,-12.89714",
+    "Rotation": "-0.0000003874302,0.0000003380701,1.000005,0.00000005960464",
+    "Scale": "1.5,1.5,1.5",
+    "Tags": "",
     "Enabled": true,
     "NetworkMode": 0,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "WorldModel",
-        "__guid": "765ebd37-c91f-4058-8815-f4b7df6f24b0",
-        "EjectTransform": {
-          "_type": "gameobject",
-          "go": "1d5347e0-820c-4015-96dc-4efd0679eca3"
-        },
-        "MuzzleTransform": {
-          "_type": "gameobject",
-          "go": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507"
-        },
+        "__guid": "ab2b3c4d-5e6f-7890-bcde-f01234567812",
+        "__enabled": true,
+        "Flags": 0,
+        "EjectBrass": null,
+        "EjectTransform": null,
+        "MuzzleEffect": null,
+        "MuzzleTransform": null,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
         "Renderer": {
           "_type": "component",
-          "component_id": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
-          "go": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
+          "component_id": "bc3c4d5e-6f7a-8901-cdef-012345678923",
+          "go": "cb1a2e3f-4d5b-6789-abcd-ef0123456701",
           "component_type": "SkinnedModelRenderer"
-        }
-      }
-    ],
-    "Children": [
+        },
+        "TracerEffect": null
+      },
       {
-        "__guid": "0645b412-29e7-4af0-ab22-6dbf084daa4d",
+        "__type": "Sandbox.SkinnedModelRenderer",
+        "__guid": "bc3c4d5e-6f7a-8901-cdef-012345678923",
+        "__enabled": true,
         "Flags": 0,
-        "Name": "w_crowbar",
-        "Position": "0,-0.6192533,-5.397455",
-        "Enabled": true,
-        "Components": [
-          {
-            "__type": "Sandbox.SkinnedModelRenderer",
-            "__guid": "5d4a8b0d-2d3a-4cc4-b43d-081f56c3ee65",
-            "BodyGroups": 18446744073709551615,
-            "CreateAttachments": true,
-            "CreateBoneObjects": true,
-            "Model": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl",
-            "Morphs": {},
-            "Parameters": {
-              "bools": {},
-              "ints": {},
-              "floats": {},
-              "vectors": {},
-              "rotations": {}
-            },
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderType": "On",
-            "Sequence": {
-              "Name": null
-            },
-            "Tint": "1,1,1,1",
-            "UseAnimGraph": true
-          }
-        ],
-        "Children": [
-          {
-            "__guid": "e4312b65-c2f9-4ab7-bdb5-2e6bc4b67507",
-            "Flags": 0,
-            "Name": "muzzle",
-            "Position": "3.854532,0,4.955329",
-            "Enabled": true
-          },
-          {
-            "__guid": "1d5347e0-820c-4015-96dc-4efd0679eca3",
-            "Flags": 0,
-            "Name": "eject",
-            "Position": "-0.843271,0,5.183321",
-            "Rotation": "0,-0.7071068,0,0.7071068",
-            "Enabled": true
-          },
-          {
-            "__guid": "8d74fc05-f7a5-4d25-b3cd-74aaae956572",
-            "Flags": 0,
-            "Name": "hold_R",
-            "Position": "-1.848641,0,3.195872",
-            "Enabled": true
-          }
-        ]
+        "AnimationGraph": null,
+        "BodyGroups": 18446744073709551615,
+        "BoneMergeTarget": null,
+        "CreateAttachments": true,
+        "CreateBoneObjects": false,
+        "LodOverride": null,
+        "MaterialGroup": null,
+        "MaterialOverride": null,
+        "Materials": null,
+        "Model": "models/weapons/sbox_melee_crowbar/w_crowbar.vmdl",
+        "Morphs": {},
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "Parameters": {
+          "bools": {},
+          "ints": {},
+          "floats": {},
+          "vectors": {},
+          "rotations": {}
+        },
+        "PlaybackRate": 1,
+        "RenderOptions": {
+          "GameLayer": true,
+          "OverlayLayer": false,
+          "BloomLayer": false,
+          "AfterUILayer": false
+        },
+        "RenderType": "On",
+        "Sequence": {
+          "Name": null,
+          "Looping": true,
+          "Blending": false
+        },
+        "Tint": "1,1,1,1",
+        "UseAnimGraph": false
       }
     ],
-    "__variables": [],
+    "Children": [],
     "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
       "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
       "TimeScale": 1,
-      "UseFixedUpdate": true,
+      "WantsSystemScene": true,
       "Metadata": {},
       "NavMesh": {
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "CustomBounds": false
       }
-    }
+    },
+    "__variables": []
   },
+  "ResourceVersion": 2,
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "ResourceVersion": 1,
   "__references": [
-    "facepunch.w_crowbar#38177"
+    "facepunch.w_crowbar#144899"
   ],
-  "__version": 1
+  "__version": 2
 }

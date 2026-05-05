@@ -1,59 +1,120 @@
 using Sandbox.UI;
+using System.Collections.Generic;
+using System.Linq;
 
-public class UndoSystem
+public class UndoSystem : GameObjectSystem<UndoSystem>
 {
-	Player Player { get; init; }
+	Dictionary<long, PlayerStack> stacks = new();
 
-	Stack<Entry> entries = new Stack<Entry>();
-
-	public UndoSystem( Player player )
+	public UndoSystem( Scene scene ) : base( scene )
 	{
-		Player = player;
-	}
-
-	public Entry Create()
-	{
-		var entry = new Entry( this );
-		entries.Push( entry );
-		return entry;
 	}
 
 	/// <summary>
-	/// Run the undo
+	/// Get the undo stack for a specific SteamId
 	/// </summary>
-	public void Undo()
+	public PlayerStack For( long steamId )
 	{
-		if ( entries.Count == 0 )
-			return;
-
-		var entry = entries.Pop();
-
-		// if we didn't do anything, do the next one
-		if ( !entry.Run() )
+		if ( !stacks.TryGetValue( steamId, out var stack ) )
 		{
-			Undo();
+			stack = new PlayerStack( steamId );
+			stacks[steamId] = stack;
 		}
-
-		// TODO - pop up notice
+		return stack;
 	}
 
+	/// <summary>
+	/// Call this when a player disconnects to prevent memory leaks!
+	/// </summary>
+	public void RemovePlayer( long steamId )
+	{
+		stacks.Remove( steamId );
+	}
 
+	/// <summary>
+	/// Remove a GameObject from all player undo stacks.
+	/// </summary>
+	public void Remove( GameObject go )
+	{
+		foreach ( var stack in stacks.Values )
+		{
+			stack.Remove( go );
+		}
+	}
+
+	/// <summary>
+	/// Per-player undo stack
+	/// </summary>
+	public class PlayerStack
+	{
+		long steamId;
+		List<Entry> entries = new();
+		const int MaxUndoSteps = 128; // Bounded history prevents indefinite memory leaks
+
+		public PlayerStack( long steamId )
+		{
+			this.steamId = steamId;
+		}
+
+		/// <summary>
+		/// Create a new undo entry
+		/// </summary>
+		public Entry Create()
+		{
+			var entry = new Entry( steamId );
+			entries.Add( entry );
+
+			if ( entries.Count > MaxUndoSteps )
+			{
+				entries.RemoveAt( 0 );
+			}
+
+			return entry;
+		}
+
+		/// <summary>
+		/// Run the undo
+		/// </summary>
+		public void Undo()
+		{
+			while ( entries.Count > 0 )
+			{
+				var entry = entries[^1];
+				entries.RemoveAt( entries.Count - 1 );
+
+				if ( entry.Run() )
+					return;
+			}
+		}
+
+		/// <summary>
+		/// Remove a GameObject from all entries in this stack.
+		/// </summary>
+		public void Remove( GameObject go )
+		{
+			foreach ( var entry in entries )
+				entry.Remove( go );
+		}
+	}
+
+	/// <summary>
+	/// An undo entry
+	/// </summary>
 	public class Entry
 	{
 		/// <summary>
 		/// The name of the undo, should fit the format "Undo something". Like "Undo Spawn Prop".
 		/// </summary>
 		public string Name { get; set; }
+		public string Icon { get; set; }
 
-		UndoSystem System;
-		Player Player => System.Player;
+		long SteamId;
 
-		Action actions = null;
-		bool actioned;
+		HashSet<GameObject> gameObjects = new();
 
-		internal Entry( UndoSystem system )
+		internal Entry( long steamId )
 		{
-			System = system;
+			SteamId = steamId;
 		}
 
 		/// <summary>
@@ -61,14 +122,27 @@ public class UndoSystem
 		/// </summary>
 		public void Add( GameObject go )
 		{
-			actions += () =>
+			gameObjects.Add( go );
+		}
+
+		/// <summary>
+		/// Add a collection of GameObjects that should be destroyed when the undo is undone
+		/// </summary>
+		/// <param name="gos"></param>
+		public void Add( params IEnumerable<GameObject> gos )
+		{
+			foreach ( var go in gos )
 			{
-				if ( go.IsValid() )
-				{
-					go.Destroy();
-					actioned = true;
-				}
-			};
+				Add( go );
+			}
+		}
+
+		/// <summary>
+		/// Remove a GameObject from this entry so it will no longer be destroyed on undo.
+		/// </summary>
+		public void Remove( GameObject go )
+		{
+			gameObjects.Remove( go );
 		}
 
 		/// <summary>
@@ -76,17 +150,29 @@ public class UndoSystem
 		/// </summary>
 		public bool Run( bool sendNotice = true )
 		{
-			actioned = false;
-			actions?.InvokeWithWarning();
+			var actioned = false;
+
+			foreach ( var go in gameObjects )
+			{
+				if ( go.IsValid() )
+				{
+					go.Destroy();
+					actioned = true;
+				}
+			}
 
 			if ( !actioned )
 				return false;
 
 			if ( sendNotice )
 			{
-				using ( Rpc.FilterInclude( Player.Network.Owner ) )
+				var c = Connection.All.FirstOrDefault( x => x.SteamId == SteamId );
+				if ( c is not null )
 				{
-					UndoNotice( Name );
+					using ( Rpc.FilterInclude( c ) )
+					{
+						UndoNotice( Name );
+					}
 				}
 			}
 
@@ -96,8 +182,8 @@ public class UndoSystem
 		[Rpc.Broadcast]
 		public static void UndoNotice( string title )
 		{
-			Notices.AddNotice( "cached", "#4af", $"Undo {title}".Trim(), 4 );
-			Sound.Play( "sounds/ui/undo.sound" );
+			Notices.AddNotice( "cached", "#3273eb", $"Undo {title}".Trim(), 5 );
+			Sound.Play( "sounds/ui/ui.undo.sound" );
 		}
 	}
 }

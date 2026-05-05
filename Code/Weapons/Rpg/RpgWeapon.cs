@@ -1,72 +1,146 @@
-using Sandbox.Rendering;
+﻿using Sandbox.Rendering;
 using Sandbox.Utility;
 
 public class RpgWeapon : BaseWeapon
 {
 	[Property] public float TimeBetweenShots { get; set; } = 2f;
 	[Property] public GameObject ProjectilePrefab { get; set; }
-	[Property] public GameObject LaserEnd { get; set; }
+	[Property] public SoundEvent ShootSound { get; set; }
+	[Property] public float ProjectileSpeed { get; set; } = 1024f;
 
-	[Sync, Change( nameof( OnLaserChanged ) )] public bool Laser { get; set; }
+	/// <summary>
+	/// When enabled, fired rockets will continuously track toward the player's crosshair.
+	/// Toggle with right-click (player) or SecondaryInput (standalone/seat).
+	/// </summary>
+	[Property, Sync, ClientEditable] public bool IsTrackedAim { get; set; } = false;
+
+	public override bool IsTargetedAim => IsTrackedAim;
+
 	[Sync( SyncFlags.FromHost )] RpgProjectile Projectile { get; set; }
 
-	private void OnLaserChanged( bool before, bool after )
-	{
-		LaserEnd.Enabled = after;
-	}
+	TimeSince TimeSinceShoot;
+	private bool _hasFired;
+	private bool _waitingForReload;
 
-	protected override void OnEnabled()
-	{
-		LaserEnd.Enabled = false;
+	/// <summary>
+	/// Whether a live rocket is currently being guided toward the crosshair.
+	/// </summary>
+	public bool IsGuiding => IsTrackedAim && Projectile.IsValid();
 
-		base.OnEnabled();
-	}
+	protected override float GetPrimaryFireRate() => TimeBetweenShots;
+
+	public override bool CanSecondaryAttack() => false;
 
 	public override void OnControl( Player player )
 	{
 		base.OnControl( player );
 
-		if ( Input.Down( "attack1" ) )
+		if ( Input.Pressed( "attack2" ) )
+			ToggleTrackedAim();
+
+		if ( _hasFired && Input.Released( "attack1" ) )
 		{
-			Shoot( player );
+			_hasFired = false;
+
+			if ( HasAmmo() )
+			{
+				if ( IsGuiding )
+					_waitingForReload = true;
+				else
+					ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
+			}
 		}
 
-		if ( Input.Released( "Attack2" ) )
+		if ( IsGuiding )
 		{
-			Laser = !Laser;
+			var target = GetAimTarget();
+			Projectile.UpdateWithTarget( target, ProjectileSpeed );
+		}
+		else if ( _waitingForReload && HasAmmo() )
+		{
+			_waitingForReload = false;
+			ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
 		}
 	}
 
-	protected override void OnUpdate()
+	/// <summary>
+	/// Standalone / seat control — uses SecondaryInput to toggle tracking.
+	/// </summary>
+	public override void OnControl()
 	{
-		base.OnUpdate();
+		base.OnControl();
 
-		if ( Laser )
+		if ( HasOwner || IsProxy ) return;
+
+		if ( SecondaryInput.Pressed() )
+			ToggleTrackedAim();
+
+		if ( IsGuiding )
 		{
-			var player = Owner;
-			if ( !player.IsValid() )
-				return;
+			var target = GetAimTarget();
+			Projectile.UpdateWithTarget( target, ProjectileSpeed );
+		}
+	}
 
-			var forward = player.EyeTransform.Rotation.Forward;
-			forward = forward.Normal;
+	[Rpc.Host]
+	private void ToggleTrackedAim()
+	{
+		IsTrackedAim = !IsTrackedAim;
+	}
 
-			var tr = Scene.Trace.Ray( player.EyeTransform.ForwardRay with { Forward = forward }, 4096 )
-				.IgnoreGameObjectHierarchy( player.GameObject )
-				.WithoutTags( "projectile" )
+	/// <summary>
+	/// Traces from AimRay and returns the world-space point the player is looking at.
+	/// </summary>
+	private Vector3 GetAimTarget()
+	{
+		var ray = AimRay;
+		var tr = Scene.Trace.Ray( ray, 16384f )
+			.IgnoreGameObjectHierarchy( AimIgnoreRoot )
+			.WithoutTags( "trigger", "projectile" )
+			.Run();
 
-				.UseHitboxes()
-				.Run();
+		return tr.Hit ? tr.HitPosition : ray.Position + ray.Forward * 16384f;
+	}
 
-			LaserEnd.WorldPosition = tr.EndPosition + (-tr.Direction * 2f);
-			LaserEnd.WorldRotation = Rotation.LookAt( -tr.Normal );
+	public override void PrimaryAttack()
+	{
+		if ( HasOwner && !TakeAmmo( 1 ) )
+		{
+			TryAutoReload();
+			return;
+		}
 
-			if ( !Projectile.IsValid() ) return;
+		TimeSinceShoot = 0;
+		AddShootDelay( TimeBetweenShots );
 
-			if ( !IsProxy )
+		if ( ViewModel.IsValid() )
+			ViewModel.RunEvent<ViewModel>( x => x.OnAttack() );
+		else if ( WorldModel.IsValid() )
+			WorldModel.RunEvent<WorldModel>( x => x.OnAttack() );
+
+		if ( ShootSound.IsValid() )
+			GameObject.PlaySound( ShootSound );
+
+		var ray = AimRay;
+		var muzzlePos = MuzzleTransform.WorldTransform.Position;
+		var spawnPos = muzzlePos + ray.Forward * 64f;
+
+		if ( HasOwner )
+		{
+			spawnPos = CheckThrowPosition( Owner, muzzlePos, spawnPos );
+
+			Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
+
+			if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
 			{
-				Projectile.UpdateWithTarget( tr.EndPosition, 1024 );
+				new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 1.5f, 2, 0.5f );
+				new Sandbox.CameraNoise.Shake( 1f, 0.6f );
+
+				_hasFired = true;
 			}
 		}
+
+		CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );
 	}
 
 	private Vector3 CheckThrowPosition( Player player, Vector3 eyePosition, Vector3 grenadePosition )
@@ -77,72 +151,26 @@ public class RpgWeapon : BaseWeapon
 			.Run();
 
 		if ( tr.Hit )
-		{
-			Log.Info( tr.GameObject );
 			return tr.EndPosition;
-		}
 
 		return grenadePosition;
-	}
-
-	TimeSince TimeSinceShoot;
-
-	public void Shoot( Player player )
-	{
-		if ( !CanShoot() || !TakeAmmo( 1 ) )
-		{
-			TryAutoReload();
-			return;
-		}
-
-		TimeSinceShoot = 0;
-
-		AddShootDelay( TimeBetweenShots );
-
-		ViewModel?.RunEvent<ViewModel>( x => x.OnAttack() );
-
-		var transform = player.EyeTransform;
-		transform.Position = transform.Position + Vector3.Down * 8f + transform.Right * 8f;
-		var forward = transform.Forward;
-		var right = transform.Right;
-		var initialPos = transform.ForwardRay.Position + (forward * 64.0f);
-
-		initialPos = CheckThrowPosition( player, transform.Position + (forward * 0.0f), initialPos );
-
-		CreateProjectile( initialPos, transform.Forward, 1024 );
-
-		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
-
-		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )
-		{
-			new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 1.5f, 2, 0.5f );
-			new Sandbox.CameraNoise.Shake( 1f, 0.6f );
-
-			if ( HasAmmo() )
-			{
-				ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
-			}
-		}
 	}
 
 	/// <summary>
 	/// Creates the projectile with the host's permission
 	/// </summary>
-	/// <param name="start"></param>
-	/// <param name="direction"></param>
-	/// <param name="speed"></param>
 	[Rpc.Host]
 	void CreateProjectile( Vector3 start, Vector3 direction, float speed )
 	{
-		if ( !Owner.IsValid() ) return;
-
 		var go = ProjectilePrefab?.Clone( start );
 
 		var projectile = go.GetComponent<RpgProjectile>();
 		Assert.True( projectile.IsValid(), "RpgProjectile not on projectile prefab" );
 
-		projectile.InstigatorId = Owner.PlayerId;
-		projectile.Explosive.InstigatorId = Owner.PlayerId;
+		if ( Owner.IsValid() )
+			projectile.Instigator = Owner;
+		else if ( ClientInput.Current.IsValid() )
+			projectile.Instigator = ClientInput.Current;
 
 		go.NetworkSpawn();
 
@@ -153,32 +181,31 @@ public class RpgWeapon : BaseWeapon
 	public override void DrawCrosshair( HudPainter hud, Vector2 center )
 	{
 		var tss = TimeSinceShoot.Relative.Remap( 0, 0.2f, 1, 0 );
-
-		var gap = 6 + Easing.EaseOut( tss ) * 32;
-		var len = 6;
 		var w = 2;
-
-		Color color = !CanShoot() ? CrosshairNoShoot : CrosshairCanShoot;
 
 		hud.SetBlendMode( BlendMode.Lighten );
 
-		// Define the size of the square
+		if ( IsTrackedAim )
+		{
+			// Diamond crosshair when in tracked aim mode
+			Color guideColor = IsGuiding ? new Color( 1f, 0.5f, 0.1f ) : CrosshairCanShoot;
+			var size = 32f;
+
+			hud.DrawLine( center + new Vector2( 0, -size ), center + new Vector2( size, 0 ), w, guideColor );
+			hud.DrawLine( center + new Vector2( size, 0 ), center + new Vector2( 0, size ), w, guideColor );
+			hud.DrawLine( center + new Vector2( 0, size ), center + new Vector2( -size, 0 ), w, guideColor );
+			hud.DrawLine( center + new Vector2( -size, 0 ), center + new Vector2( 0, -size ), w, guideColor );
+
+			return;
+		}
+
+		Color color = !CanPrimaryAttack() ? CrosshairNoShoot : CrosshairCanShoot;
+
 		var squareSize = 64f;
 
-		// Draw the four edges of the square
-		hud.DrawLine( center + new Vector2( -squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, -squareSize / 2 ), w, color ); // Top edge
-		hud.DrawLine( center + new Vector2( squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, squareSize / 2 ), w, color );   // Right edge
-		hud.DrawLine( center + new Vector2( squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, squareSize / 2 ), w, color );  // Bottom edge
-		hud.DrawLine( center + new Vector2( -squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, -squareSize / 2 ), w, color ); // Left edge
-
-		if ( Laser )
-		{
-			gap += 32f;
-			len = 16;
-			hud.DrawLine( center + Vector2.Left * (len + gap), center + Vector2.Left * gap, w, color );
-			hud.DrawLine( center - Vector2.Left * (len + gap), center - Vector2.Left * gap, w, color );
-			hud.DrawLine( center + Vector2.Up * (len + gap), center + Vector2.Up * gap, w, color );
-			hud.DrawLine( center - Vector2.Up * (len + gap), center - Vector2.Up * gap, w, color );
-		}
+		hud.DrawLine( center + new Vector2( -squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, -squareSize / 2 ), w, color );
+		hud.DrawLine( center + new Vector2( squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, squareSize / 2 ), w, color );
+		hud.DrawLine( center + new Vector2( squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, squareSize / 2 ), w, color );
+		hud.DrawLine( center + new Vector2( -squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, -squareSize / 2 ), w, color );
 	}
 }

@@ -1,0 +1,73 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+
+@inherits Panel
+@namespace Sandbox
+
+@if ( LastResult is null )
+{
+    // loading
+    return;
+}
+
+<SpawnMenuContent>
+
+    <Header>
+        <SpawnMenuToolbar>
+            <Left>
+                <TextEntry Placeholder="#spawnmenu.common.search" class="filter menu-input" Value:bind=@Filter />
+            </Left>
+
+            <Right>
+                <DropDown Value:bind=@SortOrder />
+            </Right>
+        </SpawnMenuToolbar>
+    </Header>
+
+    <Body>
+<VirtualGrid Items=@( LastResult.Packages ) ItemSize=@(120)>
+    <Item Context="item">
+        @if (item is Package entry)
+        {
+            <SpawnMenuIcon Ident=@($"prop:{entry.FullIdent}") Title="@entry.Title"></SpawnMenuIcon>
+        }
+    </Item>
+</VirtualGrid>
+    </Body>
+
+</SpawnMenuContent>
+
+@code
+{
+    public string Category { get; set; } = "";
+
+    private string Filter
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    public PackageSortMode SortOrder
+    {
+        get;
+        set { field = value; Rebuild(); }
+    }
+
+    protected override void OnParametersSet()
+    {
+        SortOrder = PackageSortMode.Popular;
+        Rebuild();
+    }
+
+    Package.FindResult LastResult;
+
+    async void Rebuild()
+    {
+        var query = $"sort:{SortOrder.ToIdentifier()} type:model";
+        if ( !string.IsNullOrEmpty( Filter ) ) query += $" {Filter} ";
+        if ( !string.IsNullOrEmpty( Category ) ) query += $" category:{Category}";
+
+        LastResult = await Package.FindAsync( query );
+        StateHasChanged();
+    }
+}

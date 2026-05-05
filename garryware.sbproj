@@ -5,13 +5,13 @@
   "Ident": "garryware",
   "Schema": 1,
   "IncludeSourceFiles": false,
-  "Resources": null,
+  "Resources": "/fonts/*\n/UI/*.png\n/ui/*.png\n/ui/*\n/ui/weapons/melee/*",
   "PackageReferences": [],
   "EditorReferences": null,
-  "Mounts": null,
+  "Mounts": [],
   "IsStandaloneOnly": false,
   "Metadata": {
-    "MaxPlayers": 64,
+    "MaxPlayers": 32,
     "MinPlayers": 1,
     "TickRate": 50,
     "GameNetworkType": "Multiplayer",
@@ -24,7 +24,14 @@
     "LeaderboardType": "None",
     "CsProjName": "",
     "StartupScene": "scenes/garryware.scene",
-    "LaunchMode": "Normal",
-    "DedicatedServerStartupScene": "scenes/garryware.scene"
+    "ControlModes": {
+      "Keyboard": true,
+      "VR": false,
+      "Gamepad": true
+    },
+    "LaunchMode": "Launcher",
+    "MapStartupScene": "scenes/garryware.scene",
+    "DedicatedServerStartupScene": "scenes/garryware.scene",
+    "SystemScene": "scenes/system.scene"
   }
 }

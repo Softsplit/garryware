@@ -1,6 +1,7 @@
-public abstract class WeaponModel : Component
+﻿public abstract class WeaponModel : Component
 {
 	[Property] public SkinnedModelRenderer Renderer { get; set; }
+	[Property] public SoundEvent DeploySound { get; set; }
 	[Property] public GameObject MuzzleTransform { get; set; }
 	[Property] public GameObject EjectTransform { get; set; }
 	[Property] public GameObject MuzzleEffect { get; set; }
@@ -10,6 +11,9 @@ public abstract class WeaponModel : Component
 	public void Deploy()
 	{
 		Renderer?.Set( "b_deploy", true );
+
+		if ( DeploySound is not null )
+			GameObject.PlaySound( DeploySound );
 	}
 
 	public Transform GetTracerOrigin()
@@ -56,5 +60,15 @@ public abstract class WeaponModel : Component
 		if ( !MuzzleTransform.IsValid() ) return;
 
 		MuzzleEffect.Clone( new CloneConfig { Parent = MuzzleTransform, Transform = global::Transform.Zero, StartEnabled = true } );
+	}
+
+	public virtual void OnAttack()
+	{
+
+	}
+
+	public virtual void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
+	{
+
 	}
 }

@@ -1,7 +1,52 @@
+using System.Threading;
+
 public sealed partial class ViewModel : WeaponModel, ICameraSetup
 {
 	[ConVar( "sbdm.hideviewmodel", ConVarFlags.Cheat )]
 	private static bool HideViewModel { get; set; } = false;
+
+	/// <summary>
+	/// A sound to play at a specific time during reload.
+	/// </summary>
+	public record struct ReloadSoundEntry
+	{
+		/// <summary>
+		/// Seconds after reload starts to play this sound.
+		/// </summary>
+		[KeyProperty] public float Time { get; set; }
+
+		/// <summary>
+		/// The sound to play.
+		/// </summary>
+		[Property, KeyProperty] public SoundEvent Sound { get; set; }
+	}
+
+	/// <summary>
+	/// Timed sound events to play during reload.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> ReloadSoundEvents { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events to play during each incremental reload cycle.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadSoundEvents { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events played when starting an incremental reload sequence.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadStartSounds { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events played when finishing an incremental reload sequence.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadFinishSounds { get; set; } = new();
+
+	private CancellationTokenSource _reloadSoundCts;
+	private CancellationTokenSource _reloadFinishSoundCts;
 
 	/// <summary>
 	/// Turns on incremental reloading parameters.
@@ -22,6 +67,12 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	public float IncrementalAnimationSpeed { get; set; } = 3.0f;
 
 	/// <summary>
+	/// Use fast anims?
+	/// </summary>
+	[Property] 
+	public bool UseFastAnimations { get; set; } = false;
+
+	/// <summary>
 	/// How much inertia should this weapon have?
 	/// </summary>
 	[Property, Group( "Inertia" )]
@@ -30,6 +81,9 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	public bool IsAttacking { get; set; }
 
 	TimeSince AttackDuration;
+
+	bool _reloadFinishing;
+	TimeSince _reloadFinishTimer;
 
 	Vector2 lastInertia;
 	Vector2 currentInertia;
@@ -88,8 +142,8 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		if ( Renderer.TryGetBoneTransformLocal( "camera", out var bone ) )
 		{
 			var scale = 0.5f;
-			cc.LocalPosition += bone.Position * scale;
-			cc.LocalRotation *= bone.Rotation * scale;
+			cc.WorldPosition += cc.WorldRotation * bone.Position * scale;
+			cc.WorldRotation *= bone.Rotation * scale;
 		}
 	}
 
@@ -101,6 +155,9 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		var rot = Scene.Camera.WorldRotation.Angles();
 
 		Renderer.Set( "b_twohanded", true );
+		Renderer.Set( "deploy_type", UseFastAnimations ? 1 : 0 );
+		Renderer.Set( "reload_type", UseFastAnimations ? 1 : 0 );
+
 		Renderer.Set( "b_grounded", playerController.IsOnGround );
 		Renderer.Set( "move_bob", GamePreferences.ViewBobbing ? playerController.Velocity.Length.Remap( 0, playerController.RunSpeed * 2f ) : 0 );
 
@@ -111,6 +168,13 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		Renderer.Set( "aim_yaw_inertia", currentInertia.y * InertiaScale.y );
 
 		Renderer.Set( "attack_hold", IsAttacking ? AttackDuration.Relative.Clamp( 0f, 1f ) : 0f );
+
+		if ( _reloadFinishing && _reloadFinishTimer >= 0.5f )
+		{
+			_reloadFinishing = false;
+			Renderer.Set( "speed_reload", AnimationSpeed );
+			Renderer.Set( "b_reloading", false );
+		}
 
 		var velocity = playerController.Velocity;
 
@@ -128,7 +192,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		Renderer.Set( "move_z", velocity.z );
 	}
 
-	public void OnAttack()
+	public override void OnAttack()
 	{
 		Renderer?.Set( "b_attack", true );
 
@@ -147,7 +211,7 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		}
 	}
 
-	public void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
+	public override void CreateRangedEffects( BaseWeapon weapon, Vector3 hitPoint, Vector3? origin )
 	{
 		DoTracerEffect( hitPoint, origin );
 	}
@@ -157,8 +221,14 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	/// </summary>
 	public void OnReloadStart()
 	{
+		_reloadFinishing = false; // cancel any pending incremental finish from a previous reload
 		Renderer?.Set( "speed_reload", AnimationSpeed );
 		Renderer?.Set( IsIncremental ? "b_reloading" : "b_reload", true );
+
+		if ( IsIncremental )
+			StartSounds( IncrementalReloadStartSounds, ref _reloadFinishSoundCts );
+
+		StartSounds( ReloadSoundEvents, ref _reloadSoundCts );
 	}
 
 	/// <summary>
@@ -168,24 +238,72 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
 		Renderer?.Set( "b_reloading_shell", true );
+
+		StartSounds( IncrementalReloadSoundEvents, ref _reloadSoundCts );
 	}
 
 	public void OnReloadFinish()
 	{
+		CancelSounds( ref _reloadSoundCts );
+
 		if ( IsIncremental )
 		{
-			//
-			// Stops the reload after a little delay so it's not immediately cancelling the animation.
-			//
-			Invoke( 0.5f, () =>
-			{
-				Renderer?.Set( "speed_reload", AnimationSpeed );
-				Renderer?.Set( "b_reloading", false );
-			} );
+			StartSounds( IncrementalReloadFinishSounds, ref _reloadFinishSoundCts );
+
+			_reloadFinishing = true;
+			_reloadFinishTimer = 0;
 		}
 		else
 		{
 			Renderer?.Set( "b_reload", false );
+		}
+	}
+
+	public void OnReloadCancel()
+	{
+		CancelSounds( ref _reloadSoundCts );
+		CancelSounds( ref _reloadFinishSoundCts );
+	}
+
+	private void StartSounds( List<ReloadSoundEntry> events, ref CancellationTokenSource cts )
+	{
+		CancelSounds( ref cts );
+
+		if ( events.Count == 0 )
+			return;
+
+		cts = new CancellationTokenSource();
+		_ = PlaySoundsAsync( events, cts.Token );
+	}
+
+	private void CancelSounds( ref CancellationTokenSource cts )
+	{
+		if ( cts is null ) return;
+
+		cts.Cancel();
+		cts.Dispose();
+		cts = null;
+	}
+
+	private async Task PlaySoundsAsync( List<ReloadSoundEntry> events, CancellationToken ct )
+	{
+		var sorted = events.OrderBy( e => e.Time ).ToList();
+		var elapsed = 0f;
+
+		foreach ( var entry in sorted )
+		{
+			var delay = entry.Time - elapsed;
+
+			if ( delay > 0f )
+				await Task.DelaySeconds( delay, ct );
+
+			if ( ct.IsCancellationRequested )
+				return;
+
+			if ( entry.Sound is not null )
+				GameObject.PlaySound( entry.Sound );
+
+			elapsed = entry.Time;
 		}
 	}
 }
