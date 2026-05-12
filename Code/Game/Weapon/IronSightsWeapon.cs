@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 /// <summary>
 /// A weapon that can aim down sights
 /// </summary>
@@ -15,12 +13,6 @@ public abstract class IronSightsWeapon : BaseBulletWeapon
 	public bool IsAiming => _isAiming;
 
 	public override bool CanSecondaryAttack() => false;
-
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
-	{
-		if ( _isAiming ) return;
-		base.DrawHud( painter, crosshair );
-	}
 
 	public override void OnControl( Player player )
 	{

@@ -1,6 +1,4 @@
-using Sandbox.UI;
-
-public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents, ICleanupEvents, Global.ISaveEvents
+public sealed partial class GameManager : GameObjectSystem<GameManager>, Component.INetworkListener, ISceneStartup, IScenePhysicsEvents
 {
 	public GameManager( Scene scene ) : base( scene )
 	{
@@ -10,7 +8,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	{
 		if ( !Networking.IsActive )
 		{
-			Networking.CreateLobby( new Sandbox.Network.LobbyConfig() { Privacy = Sandbox.Network.LobbyPrivacy.Public, MaxPlayers = 32, Name = "Sandbox", DestroyWhenHostLeaves = true } );
+			Networking.CreateLobby( new Sandbox.Network.LobbyConfig() { Privacy = Sandbox.Network.LobbyPrivacy.Public, MaxPlayers = 32, Name = "GarryWare", DestroyWhenHostLeaves = true } );
 		}
 	}
 
@@ -20,10 +18,8 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		var playerData = CreatePlayerInfo( channel );
 		SpawnPlayer( playerData );
-		CheckConnectionAchievement( channel );
-		CheckFriendsOnlineStat();
 
-		Scene.Get<Chat>()?.AddSystemText( $"{channel.DisplayName} has joined the game", "👋" );
+		Log.Info( $"{channel.DisplayName} has joined the game" );
 	}
 
 	/// <summary>
@@ -37,12 +33,9 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 			pd.GameObject.Destroy();
 		}
 
-		UndoSystem.Current?.RemovePlayer( channel.SteamId );
-
 		if ( _kickedPlayers.Remove( channel.Id ) ) return;
-		if ( BanSystem.Current?.IsBanned( channel.SteamId ) ?? false ) return;
 
-		Scene.Get<Chat>()?.AddSystemText( $"{channel.DisplayName} has left the game", "👋" );
+		Log.Info( $"{channel.DisplayName} has left the game" );
 	}
 
 	private PlayerData CreatePlayerInfo( Connection channel )
@@ -93,18 +86,6 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 
 		Local.IPlayerEvents.PostToGameObject( player.GameObject, x => x.OnSpawned() );
 		Global.IPlayerEvents.Post( x => x.OnPlayerSpawned( player ) );
-	}
-
-	void Global.ISaveEvents.AfterLoad( string filename )
-	{
-		if ( !Networking.IsHost ) return;
-
-		// Make sure we spawn any players that weren't included in the loaded save
-		foreach ( var connection in Connection.All )
-		{
-			var playerData = CreatePlayerInfo( connection );
-			SpawnPlayer( playerData );
-		}
 	}
 
 	public void SpawnPlayerDelayed( PlayerData playerData )
@@ -171,13 +152,10 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		player.PlayerData.Deaths++;
 
 		var weapon = dmg.Weapon;
-		var w = weapon.IsValid() ? weapon.GetComponentInChildren<IKillIcon>() : null;
 		var damageTags = dmg.Tags.ToString() + ( isSuicide ? " suicide" : "" );
 		var attackerTags = isSuicide ? "" : source.Tags;
 		var attackerName = isSuicide ? null : source.DisplayName;
 		var attackerSteamId = isSuicide ? 0L : source.SteamId;
-		Scene.RunEvent<Feed>( x => x.NotifyKill( player.DisplayName, attackerName, attackerSteamId, damageTags, attackerTags, "", w?.DisplayIcon ) );
-
 		if ( string.IsNullOrEmpty( attackerName ) )
 		{
 			SendMessage( $"{player.DisplayName} died (tags: {dmg.Tags})" );
@@ -192,173 +170,9 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		}
 	}
 
-	/// <summary>
-	/// Called on the host when an NPC is killed. Credits the attacker and adds a kill feed entry.
-	/// </summary>
-	public void OnNpcDeath( string npcName, DamageInfo dmg )
-	{
-		Assert.True( Networking.IsHost );
-
-		var source = dmg.Attacker?.GetComponent<IKillSource>();
-		source?.OnKill( dmg.Attacker );
-
-		var w = dmg.Weapon.IsValid() ? dmg.Weapon.GetComponentInChildren<IKillIcon>() : null;
-		var attackerName = source?.DisplayName;
-		var attackerSteamId = source?.SteamId ?? 0L;
-		var attackerTags = source?.Tags ?? "";
-
-		Scene.RunEvent<Feed>( x => x.NotifyKill( npcName, attackerName, attackerSteamId, dmg.Tags.ToString(), attackerTags, "npc", w?.DisplayIcon ) );
-	}
-
-	/// <summary>
-	/// Change a property, remotely
-	/// </summary>
-	[Rpc.Host]
-	public static void ChangeProperty( Component c, string propertyName, object value )
-	{
-		if ( !c.IsValid() ) return;
-
-		var tl = TypeLibrary.GetType( c.GetType() );
-		if ( tl is null ) return;
-
-		var prop = tl.GetProperty( propertyName );
-		if ( prop is null ) return;
-
-		prop.SetValue( c, value );
-
-		// Broadcast the change to everyone
-
-		// BUG - this is optimal I think, but doesn't work??
-		// c.GameObject.Network.Refresh( c );
-
-		c.GameObject.Network?.Refresh();
-	}
-
-	/// <summary>
-	/// Apply a debounced batch of morph changes to a <see cref="SkinnedModelRenderer"/>,
-	/// replicated to all clients. Only the morphs present in the batch are modified.
-	/// </summary>
-	[Rpc.Host]
-	public static void ApplyMorphBatch( SkinnedModelRenderer smr, string morphsJson )
-	{
-		if ( !smr.IsValid() ) return;
-		smr.GameObject.GetOrAddComponent<MorphState>().ApplyBatch( morphsJson );
-	}
-
-	/// <summary>
-	/// Apply a full morph preset (as json), and captures with <see cref="MorphState"/> which replicates changes to other clients
-	/// </summary>
-	[Rpc.Host]
-	public static void ApplyFacePosePreset( SkinnedModelRenderer smr, string morphsJson )
-	{
-		if ( !smr.IsValid() ) return;
-		smr.GameObject.GetOrAddComponent<MorphState>().ApplyPreset( morphsJson );
-	}
-
-	[Rpc.Host]
-	public static async void ChangeMaterialOverride( ModelRenderer renderer, int materialIndex, string materialPath )
-	{
-		if ( !renderer.IsValid() ) return;
-
-		Material material = null;
-
-		if ( !string.IsNullOrEmpty( materialPath ) )
-		{
-			material = Material.Load( materialPath );
-			material ??= await Cloud.Load<Material>( materialPath );
-		}
-
-		if ( !renderer.IsValid() ) return;
-
-		renderer.Materials.SetOverride( materialIndex, material );
-
-		renderer.GameObject.Network?.Refresh();
-	}
-
-	/// <summary>
-	/// Delete an object from the Inspector context menu.
-	/// </summary>
-	[Rpc.Host]
-	public static void DeleteInspectedObject( GameObject go )
-	{
-		if ( !go.IsValid() || go.IsProxy ) return;
-		if ( go.Tags.Has( "player" ) ) return;
-
-		// Check ownership if the object has an Ownable component
-		if ( !go.HasAccess( Rpc.Caller ) ) return;
-
-		go.Destroy();
-	}
-
-	/// <summary>
-	/// Break (gib) a prop from the Inspector context menu.
-	/// </summary>
-	[Rpc.Host]
-	public static void BreakInspectedProp( Prop prop )
-	{
-		if ( !prop.IsValid() || prop.IsProxy ) return;
-		// Check ownership if the object has an Ownable component
-		if ( !prop.GameObject.HasAccess( Rpc.Caller ) ) return;
-
-		var damageable = prop.GetComponent<Component.IDamageable>();
-		if ( damageable is null ) return;
-
-		var dmg = new DamageInfo( 999999, null, null );
-		dmg.Tags.Add( DamageTags.GibAlways );
-		damageable.OnDamage( in dmg );
-	}
-
-	[Rpc.Host]
-	public static void GiveSpawnerWeaponAt( string type, string path, int slot, string data = null, string icon = null, string title = null )
-	{
-		var player = Player.FindForConnection( Rpc.Caller );
-		if ( player is null ) return;
-
-		var inventory = player.GetComponent<PlayerInventory>();
-		if ( !inventory.IsValid() ) return;
-
-		if ( slot < 0 || slot >= inventory.MaxSlots ) return;
-
-		ISpawner s = type switch
-		{
-			"prop" or "mount" => new PropSpawner( path ),
-			"entity" or "sent" => new EntitySpawner( path ),
-			"dupe" when data is not null => DuplicatorSpawner.FromJson( data, title, icon ),
-			_ => null
-		};
-
-		if ( s is null ) return;
-
-		var loadout = player.GetComponent<PlayerLoadout>();
-
-		// If there's already a spawner weapon in this slot, just update
-		if ( inventory.GetSlot( slot ) is SpawnerWeapon existingSpawner )
-		{
-			existingSpawner.SetSpawner( s );
-			inventory.SwitchWeapon( existingSpawner );
-			loadout?.SaveLoadout();
-			return;
-		}
-
-		// Slot is occupied by something else — don't replace it
-		if ( inventory.GetSlot( slot ).IsValid() ) return;
-
-		inventory.Pickup( "weapons/spawner/spawner.prefab", slot, false );
-		var spawner = inventory.GetSlot( slot ) as SpawnerWeapon;
-		if ( !spawner.IsValid() ) return;
-
-		spawner.SetSpawner( s );
-		inventory.SwitchWeapon( spawner );
-		loadout?.SaveLoadout();
-	}
-
 	void IScenePhysicsEvents.OnOutOfBounds( Rigidbody body )
 	{
 		body.DestroyGameObject();
 	}
 
-	public void OnCleanup( int removedObjects, int restoredObjects )
-	{
-		Notices.AddNotice( "cleaning_services", Color.Green, $"Cleanup! Removed {removedObjects} objects, restored {restoredObjects} objects." );
-	}
 }

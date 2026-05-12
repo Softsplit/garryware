@@ -14,27 +14,6 @@ public struct PlayerDamageParams
 }
 
 /// <summary>
-/// Data passed to pickup events. Set <see cref="Cancelled"/> to true to prevent the pickup.
-/// </summary>
-public class PlayerPickupEvent
-{
-	public Player Player { get; init; }
-	public BaseCarryable Weapon { get; init; }
-	public int Slot { get; init; }
-	public bool Cancelled { get; set; }
-}
-
-/// <summary>
-/// Data passed to drop events. Set <see cref="Cancelled"/> to true to prevent the drop.
-/// </summary>
-public class PlayerDropEvent
-{
-	public Player Player { get; init; }
-	public BaseCarryable Weapon { get; init; }
-	public bool Cancelled { get; set; }
-}
-
-/// <summary>
 /// Data passed to switch weapon events. Set <see cref="Cancelled"/> to true to prevent the switch.
 /// </summary>
 public class PlayerSwitchWeaponEvent
@@ -89,7 +68,7 @@ public class PlayerRespawnEvent
 }
 
 /// <summary>
-/// Fired when a player kills another player or NPC.
+/// Fired when a player kills another player or object.
 /// </summary>
 public class PlayerKillEvent
 {
@@ -111,8 +90,6 @@ public static partial class Local
 		void OnJump() { }
 		void OnLand( float distance, Vector3 velocity ) { }
 		void OnSuicide() { }
-		void OnPickup( PlayerPickupEvent e ) { }
-		void OnDrop( PlayerDropEvent e ) { }
 		void OnSwitchWeapon( PlayerSwitchWeaponEvent e ) { }
 		void OnRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnMoveSlot( PlayerMoveSlotEvent e ) { }
@@ -137,8 +114,6 @@ public static partial class Global
 		void OnPlayerJumped( Player player ) { }
 		void OnPlayerLanded( Player player, float distance, Vector3 velocity ) { }
 		void OnPlayerSuicide( Player player ) { }
-		void OnPlayerPickup( PlayerPickupEvent e ) { }
-		void OnPlayerDrop( PlayerDropEvent e ) { }
 		void OnPlayerSwitchWeapon( PlayerSwitchWeaponEvent e ) { }
 		void OnPlayerRemoveWeapon( PlayerRemoveWeaponEvent e ) { }
 		void OnPlayerMoveSlot( PlayerMoveSlotEvent e ) { }

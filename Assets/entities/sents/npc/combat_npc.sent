@@ -1,9 +1,0 @@
-{
-  "Prefab": "entities/sents/npc/combat_npc.prefab",
-  "Title": "Army Guy",
-  "Description": "",
-  "Category": "Npc",
-  "IncludeCode": false,
-  "__references": [],
-  "__version": 0
-}

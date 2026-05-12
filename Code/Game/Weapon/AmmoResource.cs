@@ -11,11 +11,6 @@ public class AmmoResource : GameResource
 	[Property] public string Title { get; set; }
 
 	/// <summary>
-	/// Optional icon displayed in HUD and inventory.
-	/// </summary>
-	[Property] public Texture Icon { get; set; }
-
-	/// <summary>
 	/// Maximum reserve ammo a player can hold for this type.
 	/// </summary>
 	[Property] public int MaxReserve { get; set; } = 120;

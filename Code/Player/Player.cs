@@ -5,12 +5,11 @@ using System.Threading;
 /// <summary>
 /// Holds player information like health
 /// </summary>
-public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, Global.ISaveEvents, IKillSource
+public sealed partial class Player : Component, Component.IDamageable, PlayerController.IEvents, IKillSource
 {
 	private static Player LocalPlayer { get; set; }
 	public static Player FindLocalPlayer() => LocalPlayer;
 	public static T FindLocalWeapon<T>() where T : BaseCarryable => FindLocalPlayer()?.GetComponentInChildren<T>( true );
-	public static T FindLocalToolMode<T>() where T : ToolMode => FindLocalPlayer()?.GetComponentInChildren<T>( true );
 
 	[RequireComponent] public PlayerController Controller { get; set; }
 	[Property] public GameObject Body { get; set; }
@@ -46,26 +45,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	void IKillSource.OnKill( GameObject victim )
 	{
 		PlayerData.Kills++;
-		PlayerData.AddStat( victim?.GetComponent<Player>().IsValid() ?? false ? "kills" : "kills.npc" );
-	}
-
-	/// <summary>
-	/// True if the player wants the HUD not to draw right now
-	/// </summary>
-	public bool WantsHideHud
-	{
-		get
-		{
-			var freeCam = Scene.Get<FreeCamGameObjectSystem>();
-			if ( freeCam.IsActive )
-				return true;
-
-			var weapon = GetComponent<PlayerInventory>()?.ActiveWeapon;
-			if ( weapon.IsValid() && weapon.WantsHideHud )
-				return true;
-
-			return false;
-		}
 	}
 
 	protected override void OnStart()
@@ -80,6 +59,14 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		foreach ( var t in targets )
 		{
 			t.GameObject.Destroy();
+		}
+
+		// Apply height from dresser to match camera with visual height
+		if ( Body.IsValid() )
+		{
+			var dresser = Body.GetComponentInChildren<Dresser>( true );
+			if ( dresser.IsValid() )
+				ApplyHeightFromDresser( dresser );
 		}
 	}
 
@@ -293,49 +280,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		OnControl();
 	}
 
-	private RealTimeSince _timeSinceJumpPressed;
-
 	void OnControl()
 	{
-		if ( Input.UsingController )
-		{
-			Controller.UseInputControls = !(Input.Down( "SpawnMenu" ) || Input.Down( "InspectMenu" ));
-		}
-		else
-		{
-			Controller.UseInputControls = true;
-		}
-
-		if ( Input.Pressed( "die" ) )
-		{
-			KillSelf();
-			return;
-		}
-
-		if ( Input.Pressed( "jump" ) )
-		{
-			if ( _timeSinceJumpPressed < 0.3f )
-			{
-				if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
-				{
-					noclip.Enabled = !noclip.Enabled;
-				}
-			}
-
-			_timeSinceJumpPressed = 0;
-		}
-
-		if ( Input.Pressed( "undo" ) )
-		{
-			ConsoleSystem.Run( "undo" );
-		}
-
 		GetComponent<PlayerInventory>()?.OnControl();
-
-		Scene.Get<Inventory>()?.HandleInput();
 	}
 
-	[ConCmd( "sbdm.dev.sethp", ConVarFlags.Cheat )]
+	[ConCmd( "ware.dev.sethp", ConVarFlags.Cheat )]
 	private static void Dev_SetHp( int hp )
 	{
 		FindLocalPlayer().Health = hp;
@@ -467,20 +417,12 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		GameObject.SetParent( null, true );
 	}
 
-	void Global.ISaveEvents.AfterLoad( string filename )
+	private void ApplyHeightFromDresser( Dresser dresser )
 	{
-		if ( !Body.IsValid() ) return;
+		if ( !Controller.IsValid() ) return;
+		if ( !dresser.ApplyHeightScale ) return;
 
-		var dresser = Body.GetComponentInChildren<Dresser>( true );
-		if ( !dresser.IsValid() ) return;
-
-		// Apply clothing after load
-		_ = ReapplyClothingAfterLoad( dresser );
-	}
-
-	private async Task ReapplyClothingAfterLoad( Dresser dresser )
-	{
-		await dresser.Apply();
-		GameObject.Network.Refresh();
+		var heightScale = dresser.ManualHeight.Remap( 0, 1, 0.8f, 1.2f, true );
+		Controller.BodyHeight = 72f * heightScale;
 	}
 }

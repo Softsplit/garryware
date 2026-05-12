@@ -9,7 +9,7 @@ public sealed partial class Player
 	}
 
 	/// <summary>
-	/// Get player from a connecction id
+	/// Get player from a connection id
 	/// </summary>
 	/// <param name="playerId"></param>
 	/// <returns></returns>
@@ -57,18 +57,5 @@ public sealed partial class Player
 	{
 		LaunchArguments.Map = mapName;
 		Game.Load( Game.Ident, true );
-	}
-
-	/// <summary>
-	/// Switch to another map
-	/// </summary>
-	[ConCmd( "undo", ConVarFlags.Server )]
-	public static void RunUndo( Connection source )
-	{
-		var player = Player.FindForConnection( source );
-		if ( !player.IsValid() )
-			return;
-
-		player.Undo.Undo();
 	}
 }

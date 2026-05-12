@@ -16,7 +16,7 @@ public partial class BaseWeapon
 	[Property, Feature( "Ammo" ), ShowIf( nameof( UsesClips ), true )] public int ClipMaxSize { get; set; } = 30;
 
 	/// <summary>
-	/// The default amount of bullets in a weapon's magazine on pickup.
+	/// The default amount of bullets in a weapon's magazine when granted.
 	/// </summary>
 	[Property, Feature( "Ammo" ), ShowIf( nameof( UsesClips ), true )] public int ClipContents { get; set; } = 20;
 
@@ -69,7 +69,7 @@ public partial class BaseWeapon
 	[Sync] private int _reserveAmmo { get; set; } = 0;
 
 	/// <summary>
-	/// How much reserve ammo this weapon starts with on pickup.
+	/// How much reserve ammo this weapon starts with when granted.
 	/// When <see cref="AmmoType"/> is set, this seeds the shared pool only if the pool is empty.
 	/// </summary>
 	[Property, Feature( "Ammo" )] public int StartingAmmo { get; set; } = 0;

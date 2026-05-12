@@ -9,7 +9,6 @@ public partial class BaseCarryable : Component
 	}
 
 	[Property, Feature( "WorldModel" )] public GameObject WorldModelPrefab { get; set; }
-	[Property, Feature( "WorldModel" )] public GameObject DroppedGameObject { get; set; }
 	[Property, Feature( "WorldModel" )] public CitizenAnimationHelper.HoldTypes HoldType { get; set; } = CitizenAnimationHelper.HoldTypes.HoldItem;
 	[Property, Feature( "WorldModel" )] public string ParentBone { get; set; } = "hold_r";
 
@@ -21,39 +20,24 @@ public partial class BaseCarryable : Component
 		CreateWorldModel( player.Renderer );
 	}
 
-	
-	/// <summary>
-	/// Enables or disables the physics/dropped components of this carryable.
-	/// Call with <c>false</c> when picking up/holding, <c>true</c> when dropping.
-	/// </summary>
-	public void SetDropped( bool dropped )
+	public void SetCarried()
 	{
 		var rb = GetComponent<Rigidbody>( true );
-		if ( rb.IsValid() ) rb.Enabled = dropped;
+		if ( rb.IsValid() ) rb.Enabled = false;
 
 		var col = GetComponent<ModelCollider>( true );
-		if ( col.IsValid() ) col.Enabled = dropped;
-
-		var droppedWeapon = GetComponent<DroppedWeapon>( true );
-		if ( droppedWeapon.IsValid() ) droppedWeapon.Enabled = dropped;
-
-		if ( DroppedGameObject.IsValid() ) DroppedGameObject.Enabled = dropped;
+		if ( col.IsValid() ) col.Enabled = false;
 	}
 
 	/// <summary>
 	/// Creates and attaches the world model to the given renderer's bone.
-	/// Use this overload when the weapon is held by something other than a player (e.g. an NPC).
+	/// Use this overload when the weapon is held by something other than a player.
 	/// </summary>
 	public void CreateWorldModel( SkinnedModelRenderer renderer )
 	{
 		if ( renderer is null ) return;
 
-		if ( Networking.IsHost )
-		{
-			IsItem = false;
-		}
-
-		SetDropped( false );
+		SetCarried();
 
 		var worldModel = WorldModelPrefab?.Clone( new CloneConfig
 		{
@@ -76,8 +60,5 @@ public partial class BaseCarryable : Component
 
 		WorldModel?.Destroy();
 		WorldModel = default;
-
-		if ( Networking.IsHost )
-			IsItem = true;
 	}
 }

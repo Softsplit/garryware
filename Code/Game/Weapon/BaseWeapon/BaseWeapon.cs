@@ -1,6 +1,4 @@
-using Sandbox.Rendering;
-
-public partial class BaseWeapon : BaseCarryable, IPlayerControllable
+public partial class BaseWeapon : BaseCarryable
 {
 	/// <summary>
 	/// How long after deploying a weapon can you not shoot a gun?
@@ -92,11 +90,6 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 		{
 			_reserveAmmo = Math.Min( StartingAmmo, _maxReserveAmmo );
 		}
-	}
-
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
-	{
-		DrawCrosshair( painter, crosshair );
 	}
 
 	public override void OnPlayerUpdate( Player player )
@@ -201,48 +194,4 @@ public partial class BaseWeapon : BaseCarryable, IPlayerControllable
 	/// Override the secondary fire rate
 	/// </summary>
 	protected virtual float GetSecondaryFireRate() => 0.2f;
-
-	/// <summary>
-	/// The input that fires the primary attack when this weapon is controlled via a seat.
-	/// </summary>
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput ShootInput { get; set; }
-
-	/// <summary>
-	/// The input that fires the secondary attack when this weapon is controlled via a seat.
-	/// </summary>
-	[Property, Sync, ClientEditable, Group( "Inputs" )] public ClientInput SecondaryInput { get; set; }
-
-	public bool CanControl( Player player )
-	{
-		var inventory = player.GetComponent<PlayerInventory>();
-		return inventory is null || !inventory.ActiveWeapon.IsValid();
-	}
-
-	public void OnStartControl() { }
-
-	public void OnEndControl() { }
-
-	public virtual void OnControl()
-	{
-		if ( HasOwner ) return;
-		if ( IsProxy ) return;
-
-		if ( ShootInput.Down() && CanPrimaryAttack() )
-			PrimaryAttack();
-
-		if ( SecondaryInput.Down() && CanSecondaryAttack() )
-			SecondaryAttack();
-	}
-
-	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
-	{
-		var color = Color.Red;
-
-		hud.DrawLine( center + Vector2.Left * 32, center + Vector2.Left * 15, 3, color );
-		hud.DrawLine( center - Vector2.Left * 32, center - Vector2.Left * 15, 3, color );
-		hud.DrawLine( center + Vector2.Up * 32, center + Vector2.Up * 15, 3, color );
-		hud.DrawLine( center - Vector2.Up * 32, center - Vector2.Up * 15, 3, color );
-	}
-	protected Color CrosshairCanShoot => Color.White;
-	protected Color CrosshairNoShoot => Color.Red;
 }

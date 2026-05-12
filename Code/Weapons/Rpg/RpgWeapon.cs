@@ -1,5 +1,4 @@
-﻿using Sandbox.Rendering;
-using Sandbox.Utility;
+﻿using Sandbox.Utility;
 
 public class RpgWeapon : BaseWeapon
 {
@@ -10,7 +9,6 @@ public class RpgWeapon : BaseWeapon
 
 	/// <summary>
 	/// When enabled, fired rockets will continuously track toward the player's crosshair.
-	/// Toggle with right-click (player) or SecondaryInput (standalone/seat).
 	/// </summary>
 	[Property, Sync, ClientEditable] public bool IsTrackedAim { get; set; } = false;
 
@@ -60,25 +58,6 @@ public class RpgWeapon : BaseWeapon
 		{
 			_waitingForReload = false;
 			ViewModel?.RunEvent<ViewModel>( x => x.OnReloadStart() );
-		}
-	}
-
-	/// <summary>
-	/// Standalone / seat control — uses SecondaryInput to toggle tracking.
-	/// </summary>
-	public override void OnControl()
-	{
-		base.OnControl();
-
-		if ( HasOwner || IsProxy ) return;
-
-		if ( SecondaryInput.Pressed() )
-			ToggleTrackedAim();
-
-		if ( IsGuiding )
-		{
-			var target = GetAimTarget();
-			Projectile.UpdateWithTarget( target, ProjectileSpeed );
 		}
 	}
 
@@ -169,43 +148,10 @@ public class RpgWeapon : BaseWeapon
 
 		if ( Owner.IsValid() )
 			projectile.Instigator = Owner;
-		else if ( ClientInput.Current.IsValid() )
-			projectile.Instigator = ClientInput.Current;
 
 		go.NetworkSpawn();
 
 		Projectile = projectile;
 		projectile.UpdateDirection( direction, speed );
-	}
-
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
-	{
-		var tss = TimeSinceShoot.Relative.Remap( 0, 0.2f, 1, 0 );
-		var w = 2;
-
-		hud.SetBlendMode( BlendMode.Lighten );
-
-		if ( IsTrackedAim )
-		{
-			// Diamond crosshair when in tracked aim mode
-			Color guideColor = IsGuiding ? new Color( 1f, 0.5f, 0.1f ) : CrosshairCanShoot;
-			var size = 32f;
-
-			hud.DrawLine( center + new Vector2( 0, -size ), center + new Vector2( size, 0 ), w, guideColor );
-			hud.DrawLine( center + new Vector2( size, 0 ), center + new Vector2( 0, size ), w, guideColor );
-			hud.DrawLine( center + new Vector2( 0, size ), center + new Vector2( -size, 0 ), w, guideColor );
-			hud.DrawLine( center + new Vector2( -size, 0 ), center + new Vector2( 0, -size ), w, guideColor );
-
-			return;
-		}
-
-		Color color = !CanPrimaryAttack() ? CrosshairNoShoot : CrosshairCanShoot;
-
-		var squareSize = 64f;
-
-		hud.DrawLine( center + new Vector2( -squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, -squareSize / 2 ), w, color );
-		hud.DrawLine( center + new Vector2( squareSize / 2, -squareSize / 2 ), center + new Vector2( squareSize / 2, squareSize / 2 ), w, color );
-		hud.DrawLine( center + new Vector2( squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, squareSize / 2 ), w, color );
-		hud.DrawLine( center + new Vector2( -squareSize / 2, squareSize / 2 ), center + new Vector2( -squareSize / 2, -squareSize / 2 ), w, color );
 	}
 }

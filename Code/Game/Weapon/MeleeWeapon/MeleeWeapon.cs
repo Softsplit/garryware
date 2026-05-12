@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 public class MeleeWeapon : BaseCarryable
 {
 	/// <summary>
@@ -56,16 +54,20 @@ public class MeleeWeapon : BaseCarryable
 
 		var forward = AimRay.Forward;
 
-		var tr = Scene.Trace.Ray( AimRay with { Forward = forward }, Range )
+		var trace = Scene.Trace.Ray( AimRay with { Forward = forward }, Range )
 							.IgnoreGameObjectHierarchy( AimIgnoreRoot )
 							.WithoutTags( "playercontroller" )
-							.Radius( SwingRadius )
-							.UseHitboxes()
-							.Run();
+							.UseHitboxes();
+
+		var tr = trace.Run();
+		if ( !tr.Hit )
+		{
+			tr = trace.Radius( SwingRadius ).Run();
+		}
 
 		timeUntilSwing = tr.GameObject.IsValid() ? SwingDelay : MissSwingDelay;
 
-		SwingEffects( tr.EndPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
+		SwingEffects( tr.HitPosition, tr.Hit, tr.Normal, tr.GameObject, tr.Surface );
 		TraceAttack( TraceAttackInfo.From( tr, Damage, localise: false ) );
 
 		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
@@ -93,15 +95,14 @@ public class MeleeWeapon : BaseCarryable
 
 		GameObject.PlaySound( SwingSound );
 
-		if ( hitObject.IsValid() )
-			GameObject.PlaySound( HitSound );
-
 		if ( !hit || !hitObject.IsValid() )
 			return;
 
-		var prefab = hitSurface.PrefabCollection.BulletImpact ?? hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
+		hitObject.PlaySound(
+			hitSurface.SoundCollection.ImpactHard ?? hitSurface.GetBaseSurface()?.SoundCollection.ImpactHard ?? HitSound,
+			hitObject.WorldTransform.PointToLocal( hitpoint ) );
 
-		// Still null?
+		var prefab = hitSurface.PrefabCollection.BulletImpact ?? hitSurface.GetBaseSurface()?.PrefabCollection.BulletImpact;
 		if ( prefab is null )
 			return;
 
@@ -130,19 +131,5 @@ public class MeleeWeapon : BaseCarryable
 				impact.SetParent( skinned.GetBoneObject( i ), true );
 			}
 		}
-	}
-
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
-	{
-		DrawCrosshair( painter, crosshair );
-	}
-
-	public virtual void DrawCrosshair( HudPainter hud, Vector2 center )
-	{
-		var len = 6;
-		Color color = CanAttack() ? Color.White : Color.Red;
-
-		hud.SetBlendMode( BlendMode.Lighten );
-		hud.DrawCircle( center, len, color );
 	}
 }

@@ -1,5 +1,3 @@
-using Sandbox.Rendering;
-
 public enum ThrowType
 {
 	Far = 0,
@@ -55,17 +53,9 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	{
 		if ( !IsCooking ) return;
 
-		// Drop the grenade at your feet
+		// Release the grenade at your feet
 		if ( HasOwner )
 			Throw( Owner, Vector3.Down, 0.2f );
-	}
-
-	public override void OnControl()
-	{
-		if ( ShootInput.Pressed() )
-		{
-			DropGrenade();
-		}
 	}
 
 	public override void OnControl( Player player )
@@ -192,30 +182,6 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	}
 
 	[Rpc.Host]
-	void DropGrenade()
-	{
-		if ( !Prefab.IsValid() ) return;
-
-		var go = Prefab.Clone( WorldPosition );
-
-		var explosive = go.GetOrAddComponent<TimedExplosive>();
-		if ( explosive.IsValid() )
-		{
-			explosive.Lifetime = Lifetime;
-			explosive.Radius = Radius;
-			explosive.Damage = MaxDamage;
-			explosive.Force = Force;
-		}
-
-		// Don't collide with the weapon we dropped from
-		var filter = go.AddComponent<PhysicsFilter>();
-		filter.Body = GameObject;
-
-		// No velocity — just drops in place
-		go.NetworkSpawn();
-	}
-
-	[Rpc.Host]
 	void SpawnProjectile( Player player, Vector3 startPos, Vector3 direction, float powerScale )
 	{
 		if ( !player.IsValid() ) return;
@@ -284,12 +250,5 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 
 		SwitchToBestWeapon();
 		DestroyGameObject();
-	}
-
-	public override void DrawCrosshair( HudPainter hud, Vector2 center )
-	{
-		var color = !HasAmmo() ? CrosshairNoShoot : CrosshairCanShoot;
-		hud.SetBlendMode( BlendMode.Lighten );
-		hud.DrawCircle( center, 6, color );
 	}
 }

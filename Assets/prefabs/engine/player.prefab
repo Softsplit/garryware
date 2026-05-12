@@ -33,11 +33,7 @@
         "OnComponentEnabled": null,
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "SeatedCameraDistance": 128,
-        "SeatedCameraHeight": 40,
-        "SeatedCameraPositionSpeed": 3,
-        "SeatedCameraVelocityScale": 0.15
+        "OnComponentUpdate": null
       },
       {
         "__type": "Sandbox.PlayerController",
@@ -128,72 +124,11 @@
         "OnComponentUpdate": null
       },
       {
-        "__type": "PlayerDamageIndicators",
-        "__guid": "2382a8ba-4fb4-4180-853a-0d4a45e13d37",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "RadialDamageIcon": {
-          "$compiler": "texture",
-          "$source": "imagefile",
-          "data": {
-            "FilePath": "ui/damage_radial.png",
-            "MaxSize": 4096,
-            "ConvertHeightToNormals": false,
-            "NormalScale": 1,
-            "Rotate": 0,
-            "FlipVertical": false,
-            "FlipHorizontal": false,
-            "Cropping": {
-              "Left": 0,
-              "Top": 0,
-              "Right": 0,
-              "Bottom": 0
-            },
-            "Padding": {
-              "Left": 0,
-              "Top": 0,
-              "Right": 0,
-              "Bottom": 0
-            },
-            "InvertColor": false,
-            "Tint": "1,1,1,1",
-            "Blur": 0,
-            "Sharpen": 0,
-            "Brightness": 1,
-            "Contrast": 1,
-            "Saturation": 1,
-            "Hue": 0,
-            "Colorize": false,
-            "TargetColor": "0,1,0,1",
-            "CacheToDisk": true
-          },
-          "compiled": null
-        }
-      },
-      {
         "__type": "PlayerInventory",
         "__guid": "7a0edd28-8894-48d5-8ba4-ba5aadaef5be",
         "__enabled": true,
         "Flags": 0,
         "MaxSlots": 9,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
-        "__type": "PlayerStats",
-        "__guid": "4bae6484-751b-47f2-8a10-50066416f125",
-        "__enabled": true,
-        "Flags": 0,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -281,47 +216,8 @@
         "Speed": 1
       },
       {
-        "__type": "NoclipMoveMode",
-        "__guid": "6dec34fe-5ee6-452e-a92c-55a7262edbed",
-        "__enabled": false,
-        "Flags": 0,
-        "EnableCollision": false,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "RunSpeed": 1200,
-        "WalkSpeed": 200
-      },
-      {
-        "__type": "Sandbox.Movement.SitMoveMode",
-        "__guid": "b50161a7-01f2-4249-9102-efbc916e97d1",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
         "__type": "AmmoInventory",
         "__guid": "8fb19f14-699d-44d5-9cfe-77fd1aee679e",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
-        "__type": "PlayerLoadout",
-        "__guid": "e2db282f-053d-4c45-8229-dc0677aafcc8",
         "__enabled": true,
         "Flags": 0,
         "OnComponentDestroy": null,
@@ -2850,133 +2746,6 @@
         ]
       },
       {
-        "__guid": "10aa0a3b-77e3-4f4c-97e7-8ee7bc26895f",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "Voice",
-        "Position": "8,0,60.1991692",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.SandboxVoice",
-            "__guid": "4704a16b-4224-4754-b2b6-b7bd711ef508",
-            "__enabled": true,
-            "Flags": 0,
-            "Distance": 15000,
-            "Falloff": [
-              {
-                "x": 0,
-                "y": 1,
-                "in": 3.1415927,
-                "out": -3.1415927,
-                "mode": "Mirrored"
-              },
-              {
-                "x": 1,
-                "y": 0,
-                "in": -0,
-                "out": -0,
-                "mode": "Mirrored"
-              }
-            ],
-            "LipSync": true,
-            "Loopback": false,
-            "Mode": "PushToTalk",
-            "MorphScale": 3,
-            "MorphSmoothTime": 0.1,
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "PushToTalkInput": "voice",
-            "Renderer": {
-              "_type": "component",
-              "component_id": "088ccdf7-7a51-47f6-be5c-88081217e16e",
-              "go": "d0a8e1e1-bce2-477a-908c-3cfc0ac57de8",
-              "component_type": "SkinnedModelRenderer"
-            },
-            "VoiceMixer": {
-              "Name": "voices",
-              "Id": "0b98f238-2554-4bb8-90ef-10265f02337a"
-            },
-            "Volume": 1,
-            "WorldspacePlayback": false
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "b54de67a-8348-4473-a163-b630f43b0534",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "World",
-        "Position": "0,0,82",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "Sandbox.WorldPanel",
-            "__guid": "4bc3a44d-1cb1-40d4-8533-5d6a81f03b63",
-            "__enabled": true,
-            "Flags": 0,
-            "HorizontalAlign": "Center",
-            "InteractionRange": 1000,
-            "LookAtCamera": true,
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "PanelSize": "1024,512",
-            "RenderOptions": {
-              "GameLayer": true,
-              "OverlayLayer": false,
-              "BloomLayer": false,
-              "AfterUILayer": false
-            },
-            "RenderScale": 1,
-            "VerticalAlign": "Center"
-          },
-          {
-            "__type": "Sandbox.UI.Nameplate",
-            "__guid": "98225a43-3db6-430b-9922-05100908e82a",
-            "__enabled": true,
-            "Flags": 0,
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "Player": {
-              "_type": "component",
-              "component_id": "083c291c-8def-40c0-9eaa-495bef276d23",
-              "go": "2c6d6454-6f08-4d43-858b-5eec6d4c4791",
-              "component_type": "Player"
-            }
-          }
-        ],
-        "Children": []
-      },
-      {
         "__guid": "3dc9b5dd-44a4-4ac8-a4cb-2a632afbc3f3",
         "__version": 2,
         "Flags": 0,
@@ -3044,68 +2813,6 @@
             "Static": false,
             "Surface": null,
             "SurfaceVelocity": "0,0,0"
-          }
-        ],
-        "Children": []
-      },
-      {
-        "__guid": "3241975f-6bb3-48f2-8438-c3fba0f46ea7",
-        "__version": 2,
-        "Flags": 0,
-        "Name": "FlashLight",
-        "Position": "16,0,0",
-        "Rotation": "0,0,0,1",
-        "Scale": "1,1,1",
-        "Tags": "light_spot,light",
-        "Enabled": true,
-        "NetworkMode": 2,
-        "NetworkFlags": 0,
-        "NetworkOrphaned": 0,
-        "NetworkTransmit": true,
-        "OwnerTransfer": 1,
-        "Components": [
-          {
-            "__type": "PlayerFlashlight",
-            "__guid": "0000897c-f685-40d2-bdcd-88b5663c0e09",
-            "__enabled": true,
-            "Flags": 0,
-            "Light": {
-              "_type": "component",
-              "component_id": "b94699a4-3f31-4f22-9393-324e3cb589d6",
-              "go": "3241975f-6bb3-48f2-8438-c3fba0f46ea7",
-              "component_type": "SpotLight"
-            },
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "ToggleOffSound": "sounds/flashlight/flashlight-off.sound",
-            "ToggleOnSound": "sounds/flashlight/flashlight-on.sound"
-          },
-          {
-            "__type": "Sandbox.SpotLight",
-            "__guid": "b94699a4-3f31-4f22-9393-324e3cb589d6",
-            "__enabled": true,
-            "Flags": 0,
-            "Attenuation": 0.75581396,
-            "ConeInner": 18.313953,
-            "ConeOuter": 40.2907,
-            "Cookie": "textures/lightcookies/lightcookies_01.vtex",
-            "FogMode": "Enabled",
-            "FogStrength": 1,
-            "LightColor": "1,0.96549,0.91373,1",
-            "OnComponentDestroy": null,
-            "OnComponentDisabled": null,
-            "OnComponentEnabled": null,
-            "OnComponentFixedUpdate": null,
-            "OnComponentStart": null,
-            "OnComponentUpdate": null,
-            "Radius": 500,
-            "ShadowBias": 0.0005,
-            "ShadowHardness": 0,
-            "Shadows": true
           }
         ],
         "Children": []

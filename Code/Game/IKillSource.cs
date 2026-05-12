@@ -1,6 +1,6 @@
 /// <summary>
-/// Implement on any component that can appear as an attacker in the kill feed.
-/// Examples: Player, Npc, explosive barrel, turret, whatever the fuck.
+/// Implement on any component that can appear as an attacker in death events.
+/// Examples: Player, explosive barrel, turret.
 /// </summary>
 public interface IKillSource
 {
@@ -16,7 +16,7 @@ public interface IKillSource
 
 	/// <summary>
 	/// Entity-type tag passed as <c>attackerTags</c>.
-	/// Return an empty string for plain player kills. Examples: "npc"
+	/// Return an empty string for plain player kills.
 	/// </summary>
 	string Tags => "";
 
