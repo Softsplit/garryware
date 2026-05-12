@@ -2,11 +2,11 @@ public sealed class WareEnvironment
 {
 	private readonly Scene _scene;
 	private readonly List<WareRoom> _rooms = new();
-	private readonly List<GameObject> _all = new();
+	private readonly List<GameObject> _allLocations = new();
 
 	public WareRoom Current { get; private set; }
 	public IReadOnlyList<WareRoom> Rooms => _rooms;
-	public IReadOnlyList<GameObject> AllLocations => Current?.AllLocations ?? _all;
+	public IReadOnlyList<GameObject> AllLocations => Current?.AllLocations ?? _allLocations;
 
 	public WareEnvironment( Scene scene )
 	{
@@ -17,18 +17,18 @@ public sealed class WareEnvironment
 	public void Rebuild()
 	{
 		_rooms.Clear();
-		_all.Clear();
+		_allLocations.Clear();
 
 		AddSceneRooms();
 		AddSceneLocations();
 		AddSceneSpawnPoints();
 
-		Current = FindEnvironment( Current?.Name ?? "generic", 0 ) ?? _rooms.FirstOrDefault();
+		Current = FindRoom( Current?.Name ?? "generic", 0 ) ?? _rooms.FirstOrDefault();
 	}
 
 	public bool Select( string roomName, int playerCount )
 	{
-		var next = FindEnvironment( roomName, playerCount );
+		var next = FindRoom( roomName, playerCount );
 		if ( next is null ) return false;
 
 		Current = next;
@@ -73,22 +73,59 @@ public sealed class WareEnvironment
 
 	public Transform GetRandomSpawnTransform()
 	{
-		if ( Current is null ) return Transform.Zero;
+		return GetSpawnTransforms( 1 ).FirstOrDefault( Transform.Zero );
+	}
 
+	public IReadOnlyList<Transform> GetSpawnTransforms( int count )
+	{
+		if ( count <= 0 ) return [];
+		if ( Current is null ) return RepeatSpawn( Transform.Zero, count );
+
+		var candidates = GetSpawnCandidates();
+		if ( candidates.Count == 0 )
+			return RepeatSpawn( new Transform( Current.Center ).WithScale( 1 ), count );
+
+		var results = new List<Transform>( count );
+		var pool = new List<Transform>();
+
+		for ( var spawnCount = 0; spawnCount < count; spawnCount++ )
+		{
+			if ( pool.Count == 0 )
+				pool.AddRange( candidates );
+
+			var index = Random.Shared.Int( 0, pool.Count - 1 );
+			results.Add( pool[index] );
+			pool.RemoveAt( index );
+		}
+
+		return results;
+	}
+
+	private static IReadOnlyList<Transform> RepeatSpawn( Transform spawn, int count )
+	{
+		var results = new List<Transform>( count );
+
+		for ( var spawnCount = 0; spawnCount < count; spawnCount++ )
+		{
+			results.Add( spawn );
+		}
+
+		return results;
+	}
+
+	private IReadOnlyList<Transform> GetSpawnCandidates()
+	{
 		if ( Current.SpawnPoints.Count > 0 )
-			return Random.Shared.FromList( Current.SpawnPoints ).WorldTransform.WithScale( 1 );
+			return Current.SpawnPoints.Select( spawnPoint => spawnPoint.WorldTransform.WithScale( 1 ) ).ToArray();
 
 		var fallback = Current.GetLocations( "cross", "dark_ground", "light_ground", "oncrate", "center" );
 		if ( fallback.Count > 0 )
-		{
-			var location = Random.Shared.FromArray( fallback.ToArray() );
-			return new Transform( location.WorldPosition + Vector3.Up * 24f ).WithScale( 1 );
-		}
+			return fallback.Select( location => new Transform( location.WorldPosition ).WithScale( 1 ) ).ToArray();
 
-		return new Transform( Current.Center ).WithScale( 1 );
+		return [];
 	}
 
-	private WareRoom FindEnvironment( string roomName, int playerCount )
+	private WareRoom FindRoom( string roomName, int playerCount )
 	{
 		if ( string.Equals( roomName, "none", StringComparison.OrdinalIgnoreCase ) && Current is not null )
 			return Current;
@@ -120,7 +157,7 @@ public sealed class WareEnvironment
 
 		foreach ( var room in rooms )
 		{
-			if ( playerCount >= room.MinPlayers && playerCount < room.MaxPlayers )
+			if ( playerCount >= room.MinPlayers && playerCount <= room.MaxPlayers )
 			{
 				var midpoint = (room.MinPlayers + room.MaxPlayers) * 0.5f;
 				var diff = MathF.Abs( playerCount - midpoint );
@@ -163,7 +200,7 @@ public sealed class WareEnvironment
 			var room = _rooms.FirstOrDefault( x => x.Component == location.Room );
 			if ( room is null ) continue;
 
-			_all.Add( location.GameObject );
+			_allLocations.Add( location.GameObject );
 			room.AddLocation( location.GameObject.Name, location.GameObject );
 		}
 	}
@@ -196,7 +233,7 @@ public sealed class WareRoom
 	public int MinPlayers => Component.MinPlayers;
 	public int MaxPlayers => Component.MaxPlayers;
 	public GameObject Source => Component.GameObject;
-	public List<GameObject> SpawnPoints { get; } = new();
+	public List<GameObject> SpawnPoints { get; } = [];
 	public Vector3 Center => AllLocations.Count > 0 ? AverageLocationPosition() : Source.WorldPosition;
 	public IReadOnlyList<GameObject> AllLocations => _locations.Values.SelectMany( x => x ).Distinct().ToArray();
 
@@ -211,7 +248,7 @@ public sealed class WareRoom
 
 		if ( !_locations.TryGetValue( group, out var list ) )
 		{
-			list = new List<GameObject>();
+			list = [];
 			_locations[group] = list;
 		}
 
@@ -230,7 +267,7 @@ public sealed class WareRoom
 				results.AddRange( list );
 		}
 
-		return results.Distinct().ToArray();
+		return [.. results.Distinct()];
 	}
 
 	private Vector3 AverageLocationPosition()

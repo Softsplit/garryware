@@ -144,16 +144,33 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	[Rpc.Broadcast( NetFlags.HostOnly | NetFlags.Reliable )]
 	void CreateRagdoll( Vector3 velocity, Vector3 origin )
 	{
+		CreateRagdollObject( velocity, origin, RagdollKind.Death );
+	}
+
+	private enum RagdollKind
+	{
+		Death,
+		WareSimulation
+	}
+
+	private GameObject CreateRagdollObject( Vector3 velocity, Vector3 origin, RagdollKind kind )
+	{
+		return CreateRagdollObject( velocity, origin, kind, WorldTransform );
+	}
+
+	private GameObject CreateRagdollObject( Vector3 velocity, Vector3 origin, RagdollKind kind, Transform transform )
+	{
 		if ( !Controller.Renderer.IsValid() )
-			return;
+			return null;
 
 		var go = new GameObject( true, "Ragdoll" );
 		go.Tags.Add( "ragdoll" );
-		go.WorldTransform = WorldTransform;
+		go.WorldTransform = transform;
 
 		var mainBody = go.Components.Create<SkinnedModelRenderer>();
 		mainBody.CopyFrom( Controller.Renderer );
 		mainBody.UseAnimGraph = false;
+		mainBody.Tint = mainBody.Tint.WithAlpha( 1f );
 
 		// copy the clothes
 		foreach ( var clothing in Controller.Renderer.GameObject.Children.Where( x => x.Tags.Has( "clothing" ) ).SelectMany( x => x.Components.GetAll<SkinnedModelRenderer>() ) )
@@ -166,6 +183,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			var item = newClothing.Components.Create<SkinnedModelRenderer>();
 			item.CopyFrom( clothing );
 			item.BoneMergeTarget = mainBody;
+			item.Tint = item.Tint.WithAlpha( 1f );
 		}
 
 		var physics = go.Components.Create<ModelPhysics>();
@@ -174,12 +192,16 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		physics.CopyBonesFrom( Controller.Renderer, true );
 
 		ApplyRagdollForce( physics, velocity, origin );
-		
-		var corpse = go.AddComponent<DeathCameraTarget>();
-		corpse.Connection = Network.Owner;
-		corpse.Created = DateTime.Now;
+
+		if ( kind == RagdollKind.Death )
+		{
+			var corpse = go.AddComponent<DeathCameraTarget>();
+			corpse.Connection = Network.Owner;
+			corpse.Created = DateTime.Now;
+		}
 
 		CopyBoneScalesToRagdoll( go );
+		return go;
 	}
 
 	async void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
@@ -236,6 +258,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	/// </summary>
 	void Kill( in DamageInfo d )
 	{
+		RestoreWareDeath();
+
 		//
 		// Play the flatline sound on the owner
 		//
@@ -341,6 +365,9 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( damageEvent.Cancelled )
 			return;
 
+		if ( ShouldBlockWareHealthDamage( dmg ) )
+			return;
+
 		var damage = damageEvent.Damage;
 		if ( dmg.Tags.Contains( DamageTags.Headshot ) )
 			damage *= 2;
@@ -381,7 +408,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		var player = Components.Get<Player>();
 		if ( !player.IsValid() ) return;
 
-		if ( Controller.ThirdPerson || !player.IsLocalPlayer ) return;
+		if ( !player.IsLocalPlayer ) return;
 
 		new Punch( new Vector3( 0.3f * distance, Random.Shared.Float( -1, 1 ), Random.Shared.Float( -1, 1 ) ), 1.0f, 1.5f, 0.7f );
 	}
@@ -393,7 +420,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 		var player = Components.Get<Player>();
 
-		if ( Controller.ThirdPerson || !player.IsLocalPlayer ) return;
+		if ( !player.IsLocalPlayer ) return;
 
 		new Punch( new Vector3( -20, 0, 0 ), 0.5f, 2.0f, 1.0f );
 	}

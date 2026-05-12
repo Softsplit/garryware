@@ -1,0 +1,12 @@
+{
+  "UI": true,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 60,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/ware/exp_loop_2.vsnd"
+  ],
+  "__references": [],
+  "__version": 1
+}

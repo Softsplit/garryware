@@ -1,0 +1,11 @@
+{
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/ware/other_exo_won1.wav"
+  ],
+  "__references": [],
+  "__version": 1
+}

@@ -1,0 +1,91 @@
+{
+  "RootObject": {
+    "__guid": "b837f7ef-d99a-4c12-86bd-5057612cfb0a",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "sware_rocketjump",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "2,2,2",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "WareRocketJumpWeapon",
+        "__guid": "8f567bee-881b-44b2-95b0-dfd07b0a19e8",
+        "__enabled": true,
+        "Flags": 0,
+        "CanCancelReload": false,
+        "ClipContents": 0,
+        "ClipMaxSize": 0,
+        "DeployTime": 0.5,
+        "DisplayName": "SWARE Rocketjump",
+        "HoldType": "RPG",
+        "IncrementalReloading": false,
+        "MaxReserveAmmo": 0,
+        "MuzzleGameObject": null,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "ProjectileForce": 5000000,
+        "ReloadTime": 1.5,
+        "ReserveAmmo": 0,
+        "ShootSound": "weapons/rpg/sounds/rpg_shoot.sound",
+        "SingleUse": false,
+        "StartingAmmo": 0,
+        "TimeBetweenShots": 0.75,
+        "UsesAmmo": false,
+        "UsesClips": false,
+        "Value": 2,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/rpg/rpg_wm.prefab"
+        }
+      }
+    ],
+    "Children": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "facepunch.wrecoillessrifle#144908"
+  ],
+  "__version": 2
+}

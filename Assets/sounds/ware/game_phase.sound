@@ -1,0 +1,16 @@
+{
+  "UI": true,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/ware/exp_game_new_1.vsnd",
+    "sounds/ware/exp_game_new_2.vsnd",
+    "sounds/ware/exp_game_new_3.vsnd",
+    "sounds/ware/exp_game_new_4.vsnd",
+    "sounds/ware/exp_game_new_5.vsnd"
+  ],
+  "__references": [],
+  "__version": 1
+}

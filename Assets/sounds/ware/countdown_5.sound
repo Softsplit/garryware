@@ -1,0 +1,12 @@
+{
+  "UI": true,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/ware/countdown_ann_sec5.mp3"
+  ],
+  "__references": [],
+  "__version": 1
+}

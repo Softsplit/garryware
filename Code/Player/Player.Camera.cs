@@ -14,7 +14,15 @@ public sealed partial class Player
 		camera.FovAxis = CameraComponent.Axis.Vertical;
 		camera.FieldOfView = Screen.CreateVerticalFieldOfView( Preferences.FieldOfView, 9.0f / 16.0f );
 
+		camera.RenderExcludeTags.Remove( "firstperson" );
+
 		Local.IPlayerEvents.Post( x => x.OnCameraSetup( camera ) );
+
+		if ( ApplyWareDeathCamera( camera ) )
+		{
+			Local.IPlayerEvents.Post( x => x.OnCameraPostSetup( camera ) );
+			return;
+		}
 
 		ApplyMovementCameraEffects( camera );
 
@@ -23,7 +31,6 @@ public sealed partial class Player
 
 	private void ApplyMovementCameraEffects( CameraComponent camera )
 	{
-		if ( Controller.ThirdPerson ) return;
 		if ( !GamePreferences.ViewBobbing ) return;
 
 		var r = Controller.WishVelocity.Dot( EyeTransform.Left ) / -250.0f;

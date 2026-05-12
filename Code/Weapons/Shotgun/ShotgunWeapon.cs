@@ -70,7 +70,7 @@
 			0
 		);
 
-		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
+		if ( Owner.IsLocalPlayer )
 		{
 			_ = new Sandbox.CameraNoise.Recoil( Bullet.CameraRecoilStrength, Bullet.CameraRecoilFrequency );
 		}

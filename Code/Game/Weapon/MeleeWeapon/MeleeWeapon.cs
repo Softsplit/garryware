@@ -72,7 +72,7 @@ public class MeleeWeapon : BaseCarryable
 
 		player.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
 
-		if ( !player.Controller.ThirdPerson && player.IsLocalPlayer )
+		if ( player.IsLocalPlayer )
 		{
 			new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( -10, -15 ), Random.Shared.Float( -10, 0 ), 0 ), 1.0f, 3, 0.5f );
 			new Sandbox.CameraNoise.Shake( 0.3f, 1.2f );

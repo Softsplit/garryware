@@ -13,12 +13,12 @@ public sealed partial class PlayerData
 		_ => null
 	};
 
-	public void ResetWareState( bool? initialResult )
+	public void ResetWareState( bool? initialPlayerResult )
 	{
 		Assert.True( Networking.IsHost, "PlayerData.ResetWareState is host-only" );
 
 		WareLocked = false;
-		WareResult = initialResult switch
+		WareResult = initialPlayerResult switch
 		{
 			true => WarePlayerResult.Passed,
 			false => WarePlayerResult.Failed,

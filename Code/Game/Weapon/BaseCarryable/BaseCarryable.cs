@@ -56,8 +56,6 @@ public partial class BaseCarryable : Component
 		{
 			var go = ViewModel;
 
-			if ( Scene.Camera.RenderExcludeTags.Contains( "firstperson" ) ) go = default;
-
 			if ( !go.IsValid() ) go = WorldModel;
 			if ( !go.IsValid() ) go = GameObject;
 
@@ -84,25 +82,15 @@ public partial class BaseCarryable : Component
 	public bool HasOwner => Owner.IsValid();
 
 	/// <summary>
-	/// When true, third-person aim uses the scene camera direction instead of the weapon's muzzle direction.
-	/// </summary>
-	public virtual bool IsTargetedAim => false;
-
-	/// <summary>
-	/// Unified aim ray for all weapons. Returns the correct ray based on first-person or third-person context.
+	/// Unified first-person aim ray for all weapons.
 	/// </summary>
 	public Ray AimRay
 	{
 		get
 		{
 			if ( HasOwner )
-			{
-				var owner = Owner;
-				if ( owner.Controller.IsValid() && owner.Controller.ThirdPerson && Scene.Camera.IsValid() )
-					return Scene.Camera.Transform.World.ForwardRay;
+				return Owner.EyeTransform.ForwardRay;
 
-				return owner.EyeTransform.ForwardRay;
-			}
 			var muzzle = MuzzleTransform.WorldTransform;
 			return new Ray( muzzle.Position, muzzle.Rotation.Forward );
 		}
@@ -187,14 +175,7 @@ public partial class BaseCarryable : Component
 	{
 		if ( player is null ) return;
 
-		if ( !player.Controller.ThirdPerson )
-		{
-			CreateViewModel();
-		}
-		else
-		{
-			DestroyViewModel();
-		}
+		CreateViewModel();
 
 		GameObject.Network.Interpolation = false;
 	}

@@ -2,10 +2,13 @@ namespace WareMinigames;
 
 public sealed class Sprint : WareMinigame
 {
-	public override string Ident => "sprint";
-	public override string Title => "Keep moving!";
-	public override float Windup => 1.5f;
-	public override float Duration => 4f;
+	private const float MaxSpeed = 320f;
+
+	public override string Name => "sprint";
+	public override string Title => "Don't stop sprinting!";
+	public override float Windup => 2.5f;
+	public override float Duration => 5f;
+	public override bool? InitialPlayerResult => true;
 
 	public override void Initialize()
 	{
@@ -16,8 +19,9 @@ public sealed class Sprint : WareMinigame
 	{
 		foreach ( var player in Players )
 		{
-			var speed = player.Controller?.Velocity.WithZ( 0 ).Length ?? 0f;
-			SetAchieved( player, speed > 160f );
+			if ( player.PlayerData.WareLocked ) continue;
+			if ( MovementSpeed( player ) < MaxSpeed * 0.8f )
+				FailAndSimulateDeath( player );
 		}
 	}
 }

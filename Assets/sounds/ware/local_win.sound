@@ -1,0 +1,16 @@
+{
+  "UI": true,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/ware/local_exo_won1.vsnd",
+    "sounds/ware/local_exo_won2.vsnd",
+    "sounds/ware/local_exo_won3.vsnd",
+    "sounds/ware/local_exo_won2.vsnd",
+    "sounds/ware/local_exo_won3.vsnd"
+  ],
+  "__references": [],
+  "__version": 1
+}

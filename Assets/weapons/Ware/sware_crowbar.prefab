@@ -1,0 +1,89 @@
+{
+  "RootObject": {
+    "__guid": "f1dd79eb-cfcd-418e-b368-4a6fb2c63ee4",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "sware_crowbar",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1.5,1.5,1.5",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "WareThrownCrowbarWeapon",
+        "__guid": "9251ea21-8a21-4035-9944-f85a4e625ab6",
+        "__enabled": true,
+        "Flags": 0,
+        "CanCancelReload": false,
+        "ClipContents": 0,
+        "ClipMaxSize": 0,
+        "DeployTime": 0.5,
+        "DisplayName": "SWARE Projectile Crowbar",
+        "HoldType": "Swing",
+        "IncrementalReloading": false,
+        "MaxReserveAmmo": 0,
+        "MuzzleGameObject": null,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "ProjectileForce": 100000,
+        "ReloadTime": 1.5,
+        "ReserveAmmo": 0,
+        "StartingAmmo": 0,
+        "ThrowSound": "weapons/crowbar/sounds/crowbar.swing.sound",
+        "UsesAmmo": false,
+        "UsesClips": false,
+        "Value": 1,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/crowbar/crowbar_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/crowbar/crowbar_wm.prefab"
+        }
+      }
+    ],
+    "Children": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "facepunch.w_crowbar#144899"
+  ],
+  "__version": 2
+}

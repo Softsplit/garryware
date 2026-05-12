@@ -1,0 +1,45 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+
+<root>
+	<div class="ware-hud">
+	@if ( Instruction.IsVisible )
+	{
+		<div class="ware-message instruction" style="@Instruction.PanelStyle( 75f )">
+			<div class="ware-border" style="@Instruction.BorderStyle()">
+				<div class="ware-fill" style="@Instruction.FillStyle()">
+					<label style="@Instruction.TextStyle()">@Instruction.Text</label>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if ( Status.IsVisible )
+	{
+		<div class="ware-message status" style="@Status.PanelStyle( 62.5f )">
+			<div class="ware-border" style="@Status.BorderStyle()">
+				<div class="ware-fill" style="@Status.FillStyle()">
+					<label style="@Status.TextStyle()">@Status.Text</label>
+				</div>
+			</div>
+		</div>
+	}
+	</div>
+</root>
+
+@code
+{
+	private WareHudMessage Instruction => WareHudState.Instruction;
+	private WareHudMessage Status => WareHudState.Status;
+
+	protected override void OnUpdate()
+	{
+		StateHasChanged();
+	}
+
+	protected override int BuildHash()
+	{
+		return HashCode.Combine( WareHudState.Version, Instruction.IsVisible, Status.IsVisible, (int)(Instruction.Age * 60f), (int)(Status.Age * 60f) );
+	}
+}

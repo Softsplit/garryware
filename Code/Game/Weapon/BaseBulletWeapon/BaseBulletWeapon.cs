@@ -107,7 +107,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 			0
 		);
 
-		if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
+		if ( Owner.IsLocalPlayer )
 		{
 			_ = new Sandbox.CameraNoise.Recoil( config.CameraRecoilStrength, config.CameraRecoilFrequency );
 		}

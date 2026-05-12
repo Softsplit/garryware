@@ -1,0 +1,14 @@
+{
+  "UI": true,
+  "Volume": "1",
+  "Pitch": "1",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sounds/ware/local_lose2.vsnd",
+    "sounds/ware/local_lose3.vsnd",
+    "sounds/ware/local_lose4.vsnd"
+  ],
+  "__references": [],
+  "__version": 1
+}

@@ -12,8 +12,6 @@ public class RpgWeapon : BaseWeapon
 	/// </summary>
 	[Property, Sync, ClientEditable] public bool IsTrackedAim { get; set; } = false;
 
-	public override bool IsTargetedAim => IsTrackedAim;
-
 	[Sync( SyncFlags.FromHost )] RpgProjectile Projectile { get; set; }
 
 	TimeSince TimeSinceShoot;
@@ -110,13 +108,13 @@ public class RpgWeapon : BaseWeapon
 
 			Owner.Controller.EyeAngles += new Angles( Random.Shared.Float( -0.2f, -0.3f ), Random.Shared.Float( -0.1f, 0.1f ), 0 );
 
-			if ( !Owner.Controller.ThirdPerson && Owner.IsLocalPlayer )
+			if ( Owner.IsLocalPlayer )
 			{
 				new Sandbox.CameraNoise.Punch( new Vector3( Random.Shared.Float( 45, 35 ), Random.Shared.Float( -10, -5 ), 0 ), 1.5f, 2, 0.5f );
 				new Sandbox.CameraNoise.Shake( 1f, 0.6f );
-
-				_hasFired = true;
 			}
+
+			_hasFired = true;
 		}
 
 		CreateProjectile( spawnPos, ray.Forward, ProjectileSpeed );

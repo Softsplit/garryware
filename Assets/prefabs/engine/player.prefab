@@ -98,7 +98,7 @@
         "ShowColliderComponents": true,
         "ShowRigidbodyComponent": true,
         "ThirdPerson": false,
-        "ToggleCameraModeButton": "view",
+        "ToggleCameraModeButton": "",
         "UseAnimatorControls": true,
         "UseButton": "use",
         "UseCameraControls": true,
@@ -106,22 +106,6 @@
         "UseInputControls": true,
         "UseLookControls": true,
         "WalkSpeed": 230
-      },
-      {
-        "__type": "PlayerFallDamage",
-        "__guid": "e2cad285-157a-42b4-b039-8b6918efbc0b",
-        "__enabled": true,
-        "Flags": 0,
-        "DamageMultiplier": 1,
-        "FallSound": null,
-        "FatalFallSpeed": 1536,
-        "MaxSafeFallSpeed": 512,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
       },
       {
         "__type": "PlayerInventory",

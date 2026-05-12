@@ -3,17 +3,19 @@ namespace WareMinigames;
 public sealed class InTheAir : WareMinigame
 {
 	private bool _trap;
+	private float _duration;
 	private float _zCap;
 
-	public override string Ident => "in_the_air";
+	public override string Name => "intheair";
 	public override string Title => "When clock reaches zero...";
 	public override string Room => "empty";
 	public override float Windup => 2f;
-	public override float Duration => 3.5f;
+	public override float Duration => _duration;
 
 	public override void Initialize()
 	{
-		_trap = Random.Shared.Float( 0f, 1f ) <= 0.35f;
+		_trap = Random.Shared.Int( 0, 10 ) <= 3;
+		_duration = _trap ? Random.Shared.Float( 1.3f, 2.5f ) : Random.Shared.Float( 1.3f, 5.0f );
 		_zCap = Environment.GetLowestZ( "dark_ground" ) + 96f;
 		SetInstruction( "When clock reaches zero..." );
 	}
@@ -23,7 +25,7 @@ public sealed class InTheAir : WareMinigame
 		SetInstruction( _trap ? "Stay on the ground!" : "Be high in the air!" );
 
 		foreach ( var player in Players )
-			GiveWeapon( player, "weapons/rpg/rpg.prefab" );
+			GiveWeapon( player, WareWeaponPaths.RocketJumpLimited );
 	}
 
 	public override void UpdateAction()
